@@ -3,6 +3,7 @@ package org.usfirst.frc.team115.robot;
 
 import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
+import org.usfirst.frc.team115.robot.subsystems.Elevator;
 import org.usfirst.frc.team115.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -26,6 +27,7 @@ public class Robot extends IterativeRobot {
 	public static DriveTrain drivetrain;
 	public static Intake intake;
 	public static Carriage carriage;
+	public static Elevator elevator;
 	
 	DigitalInput limitSwitch;
 
@@ -42,6 +44,8 @@ public class Robot extends IterativeRobot {
 		drivetrain = new DriveTrain();
 		intake = new Intake();
 		carriage = new Carriage();
+		elevator = new Elevator();
+		
 		limitSwitch = new DigitalInput(0);
 		SmartDashboard.putData("Auto mode", chooser);
 	}

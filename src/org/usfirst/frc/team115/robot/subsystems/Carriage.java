@@ -1,32 +1,37 @@
 package org.usfirst.frc.team115.robot.subsystems;
 
+import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.commands.CarriageCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Carriage extends Subsystem {
 	
-	private TalonSRX leftCarriage;
-	private TalonSRX rightCarriage;
+	private DoubleSolenoid carriage;
 	
 	public Carriage()  {
-		leftCarriage = new TalonSRX(24);
-		rightCarriage = new TalonSRX(25);
+		carriage = new DoubleSolenoid(1, Constants.kCarriagePortA, Constants.kCarriagePortB);
 	}
 	
-	public void intakeCube (double leftSpeed, double rightSpeed) 
-	{
-		leftCarriage.set(ControlMode.PercentOutput, leftSpeed);
-		rightCarriage.set(ControlMode.PercentOutput, rightSpeed);
+	public void extend() {
+		carriage.set(Value.kForward);
 	}
 	
-	public void outtakeCube (double motorSpeed) 
-	{
-		leftCarriage.set(ControlMode.Follower, rightCarriage.getDeviceID() );
-		rightCarriage.set(ControlMode.PercentOutput, motorSpeed);
+	public void retract() {
+		carriage.set(Value.kReverse);
+	}
+	
+	public void intakeCube (double leftSpeed, double rightSpeed) {
+	
+	}
+	
+	public void outtakeCube (double motorSpeed) {
+		
 	}
 	
 	@Override
