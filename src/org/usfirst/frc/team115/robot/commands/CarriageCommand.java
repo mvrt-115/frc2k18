@@ -4,7 +4,7 @@ import org.usfirst.frc.team115.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class CarriageCommand extends Command{
+public class CarriageCommand extends Command {
 
 	public CarriageCommand() {
 		requires(Robot.intake);

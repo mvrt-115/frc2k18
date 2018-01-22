@@ -10,7 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class Elevator extends Subsystem{
+public class Elevator extends Subsystem {
 
 	TalonSRX left, right;
 	
