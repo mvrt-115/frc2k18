@@ -4,12 +4,11 @@ import org.usfirst.frc.team115.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class ElevateToSwitch extends Command{
+public class MiddleScaleElevate extends Command{
 
 	private double setpoint;
 
-	public ElevateToSwitch(double _setpoint) {
-		setpoint = _setpoint;
+	public MiddleScaleElevate() {
 		requires(Robot.elevator);
 	}
 	public void execute() {
@@ -17,7 +16,7 @@ public class ElevateToSwitch extends Command{
 	}
 
 	protected boolean isFinished() {
-		 return Robot.oi.manualElevatePressed();
+		return Robot.oi.manualElevatePressed();
 	}
 
 	public void end() {

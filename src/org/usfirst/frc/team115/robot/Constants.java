@@ -46,8 +46,8 @@ public class Constants {
 	public static int kOperatorJoystick = 0;
 	public static int kWinchButton = 1;
 	
-	public static int kCarriagePortA;
-	public static int kCarriagePortB;
+	public static int kIntakePortA;
+	public static int kIntakePortB;
 	
 	public static int kPIDLoopIdx;
 	public static int kTimeoutMs;
