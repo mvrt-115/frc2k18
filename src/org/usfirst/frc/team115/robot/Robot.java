@@ -101,15 +101,15 @@ public class Robot extends IterativeRobot {
 		 * autonomousCommand = new ExampleCommand(); break; }
 		 */
 
-		//Read game configuration
+		//Read game configuration via FMS and robot position via Driverstation
+		//https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
+		String robotStartingPos;
+		SmartDashboard.getString("Starting Position: ", robotStartingPos); //A, B, C
 
-		gameData = DriverStation.getInstance().getGameSpecificMessage(); // Gets FMS and input from Driverstation
-		String configurations;
-		SmartDashboard.getString("Field Configuration: ", configurations);
-
-		gameRobotStartingConfig = configurations.charAt(0); //A,B,C from left to right
-		gameSwitchConfig = configurations.charAt(1); //L,R from driver view
-		gameScaleConfig = configurations.charAt(2); //L,R from driver view
+		gameRobotStartingConfig = robotStartingPos.charAt(0); //A,B,C from left to right
+		gameSwitchConfig = gameData.charAt(0); //L,R from driver view
+		gameScaleConfig = gameData.charAt(1); //L,R from driver view
 
 
 		// schedule the autonomous command (example)

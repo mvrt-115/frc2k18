@@ -2,9 +2,11 @@ package org.usfirst.frc.team115.robot;
 
 
 import org.usfirst.frc.team115.robot.commands.IntakeCommand;
+import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
 import org.usfirst.frc.team115.robot.commands.ElevateToScale;
-import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
+import org.usfirst.frc.team115.robot.commands.ZeroElevator;
+import org.usfirst.frc.team115.robot.commands.ManualElevate;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -29,7 +31,7 @@ public class OI {
 	JoystickButton highScaleElevate;
 	
 	JoystickButton manualElevate;
-	JoystickButton lowerElevator;
+	JoystickButton zeroElevator;
 
 	public OI() {
 		driverJoystick = new Joystick(0);
@@ -46,7 +48,7 @@ public class OI {
 		highScaleElevate = new JoystickButton(operatorPanel, 4);
 		
 		manualElevate = new JoystickButton(operatorPanel, 5);
-		lowerElevator = new JoystickButton(operatorPanel, 6);
+		zeroElevator = new JoystickButton(operatorPanel, 6);
 		
 		intake.whenPressed(new IntakeCommand());
 		outtake.whenPressed(new OuttakeCommand());
@@ -57,6 +59,9 @@ public class OI {
 		
 		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
 		highSwitchElevate.whenPressed(new ElevateToScale("high"));
+
+		manualElevate.whenPressed(new manualElevate())
+		zeroElevator.whenPressed(new zeroElevator());
 	}
 	
 	public double getThrottle() {

@@ -25,6 +25,6 @@ public class ElevateToSwitch extends Command {
 	}
 
 	public void end() {
-		Robot.elevator.home();
+		Robot.elevator.zero();
 	}
 }

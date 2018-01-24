@@ -58,7 +58,7 @@ public class Elevator extends Subsystem {
 		left.set(ControlMode.MotionMagic, targetPos); 
 	}
 	
-	public void home() {
+	public void zero() {
 		setElevatorSetpoint(0.0);
 	}
 	

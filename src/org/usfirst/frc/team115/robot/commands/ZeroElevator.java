@@ -5,13 +5,13 @@ import org.usfirst.frc.team115.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class LowerElevator extends InstantCommand{
+public class ZeroElevator extends InstantCommand {
 
-	public LowerElevator() {
+	public ZeroElevator() {
 		requires(Robot.elevator);
 	}
 	
 	public void execute() {
-		Robot.elevator.home();
+		Robot.elevator.zero();
 	}
 }
