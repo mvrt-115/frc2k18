@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class DriveTrain extends Subsystem implements PIDOutput{
+public class DriveTrain extends Subsystem implements PIDOutput {
 	TalonSRX frontLeft, backLeft, frontRight, backRight;
 	
 	private static final double SENSITIVITY = 0.75;

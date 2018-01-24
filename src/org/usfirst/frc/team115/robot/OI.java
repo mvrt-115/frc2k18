@@ -2,6 +2,9 @@ package org.usfirst.frc.team115.robot;
 
 
 import org.usfirst.frc.team115.robot.commands.IntakeCommand;
+import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
+import org.usfirst.frc.team115.robot.commands.ElevateToScale;
+import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -11,6 +14,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
  * This class is the glue that binds the controls on the physical operatorPanel
  * interface to the commands and command groups that allow control of the robot.
  */
+
 public class OI {
 	Joystick driverJoystick;
 	JoystickButton intake;
@@ -18,24 +22,41 @@ public class OI {
 	JoystickButton carriage;
 	
 	Joystick operatorPanel;
-	JoystickButton scaleElevate;
-	JoystickButton switchElevate;
+	JoystickButton defaultSwitchElevate;
+	JoystickButton highSwitchElevate;
+	JoystickButton lowScaleElevate;
+	JoystickButton defaultScaleElevate;
+	JoystickButton highScaleElevate;
+	
 	JoystickButton manualElevate;
 	JoystickButton lowerElevator;
-	
+
 	public OI() {
 		driverJoystick = new Joystick(0);
 		intake = new JoystickButton(driverJoystick, 0);	
 		outtake = new JoystickButton(driverJoystick, 1); 
 		
 		operatorPanel = new Joystick(1);
-		scaleElevate = new JoystickButton(operatorPanel, 0);
-		switchElevate = new JoystickButton(operatorPanel, 1);
-		manualElevate = new JoystickButton(operatorPanel, 2);
-		lowerElevator = new JoystickButton(operatorPanel, 3);
+		
+		defaultSwitchElevate = new JoystickButton(operatorPanel, 0);
+		highSwitchElevate = new JoystickButton(operatorPanel, 1);
+		
+		lowScaleElevate = new JoystickButton(operatorPanel, 2);
+		defaultScaleElevate = new JoystickButton(operatorPanel, 3);
+		highScaleElevate = new JoystickButton(operatorPanel, 4);
+		
+		manualElevate = new JoystickButton(operatorPanel, 5);
+		lowerElevator = new JoystickButton(operatorPanel, 6);
 		
 		intake.whenPressed(new IntakeCommand());
-		//need to connect buttons to rest of commands
+		outtake.whenPressed(new OuttakeCommand());
+		
+		defaultSwitchElevate.whenPressed(new ElevateToSwitch("default"));
+		highSwitchElevate.whenPressed(new ElevateToSwitch("high"));
+		lowScaleElevate.whenPressed(new ElevateToScale("low"));
+		
+		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
+		highSwitchElevate.whenPressed(new ElevateToScale("high"));
 	}
 	
 	public double getThrottle() {
@@ -57,17 +78,8 @@ public class OI {
 	public boolean outtakePressed() {
 		return outtake.get();
 	}
-	
-	public boolean scaleElevatePressed() {
-		return scaleElevate.get();
-	}
-	
-	public boolean switchElevatePressed() {
-		return switchElevate.get();
-	}
-	
+		
 	public boolean manualElevatePressed() {
 		return manualElevate.get();
 	}
 }
-

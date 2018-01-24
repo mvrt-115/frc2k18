@@ -14,6 +14,10 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.usfirst.frc.team115.robot.auton.DriveAutoLine;
+import org.usfirst.frc.team115.robot.auton.DriveScale;
+import org.usfirst.frc.team115.robot.auton.DriveSwitch;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the IterativeRobot
@@ -28,6 +32,10 @@ public class Robot extends IterativeRobot {
 	public static Intake intake;
 	public static Carriage carriage;
 	public static Elevator elevator;
+
+	public static char gameRobotStartingConfig;
+	public static char gameSwitchConfig;
+	public static char gameScaleConfig;
 	
 	DigitalInput limitSwitch;
 
@@ -47,6 +55,12 @@ public class Robot extends IterativeRobot {
 		elevator = new Elevator();
 		
 		limitSwitch = new DigitalInput(0);
+
+		chooser.addDefault("Do Nothing", null);
+		chooser.addObject("Drive Auto Line", new DriveAutoLine());
+		chooser.addObject("Drive Scale", new DriveScale());
+		chooser.addObject("Drive Switch", new DriveSwitch());
+
 		SmartDashboard.putData("Auto mode", chooser);
 	}
 
@@ -86,6 +100,17 @@ public class Robot extends IterativeRobot {
 		 * = new MyAutoCommand(); break; case "Default Auto": default:
 		 * autonomousCommand = new ExampleCommand(); break; }
 		 */
+
+		//Read game configuration
+
+		gameData = DriverStation.getInstance().getGameSpecificMessage(); // Gets FMS and input from Driverstation
+		String configurations;
+		SmartDashboard.getString("Field Configuration: ", configurations);
+
+		gameRobotStartingConfig = configurations.charAt(0); //A,B,C from left to right
+		gameSwitchConfig = configurations.charAt(1); //L,R from driver view
+		gameScaleConfig = configurations.charAt(2); //L,R from driver view
+
 
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)

@@ -1,41 +1,57 @@
 package org.usfirst.frc.team115.robot.subsystems;
 
+import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.commands.IntakeCommand;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem {
 	
-	private TalonSRX leftIntake;
-	private TalonSRX rightIntake;
-	
-	Carriage carriage;
-	
+	private DoubleSolenoid intake;
+	private TalonSRX left;
+	private TalonSRX right;
+	public DigitalInput breakbeam;
+
 	public Intake()  {
-		carriage = new Carriage();
-		leftIntake = new TalonSRX(16);	//left cantalon port tbd
-		rightIntake = new TalonSRX(17);	//right cantalon port tbd
+		requires(Robot.carriage);
+		left = new TalonSRX(16);	//left cantalon port tbd
+		right = new TalonSRX(17);	//right cantalon port tbd
+		right.set(ControlMode.Follower, left.getDeviceID());
+		breakbeam = new DigitalInput(0);
+		intake = new DoubleSolenoid(1,Constants.kIntakePortA, Constants.kIntakePortB);
 	}
 	
-	public void intakeCube (double leftSpeed, double rightSpeed) 
-	{
-		leftIntake.set(ControlMode.PercentOutput, leftSpeed);
-		rightIntake.set(ControlMode.PercentOutput, rightSpeed);
-		carriage.intakeCube(1, 1);	//values tbd
+	public void extendIntake() {
+		intake.set(Value.kReverse);
+	}
+
+	public void retractIntake() {
+		intake.set(Value.kForward);	
 	}
 	
-	public void outtakeCube (double motorSpeed) 
-	{
-		leftIntake.set(ControlMode.Follower, rightIntake.getDeviceID() );
-		rightIntake.set(ControlMode.PercentOutput, motorSpeed);
-		carriage.outtakeCube(-1);	//values tbd
+	public void intakeCube () {
+		if (intake.get() != Value.kReverse) //check if already extended
+			extendIntake();
+		left.set(ControlMode.PercentOutput, 1);
+		Robot.carriage.intakeCube(1);
+	}
+	
+	public void outtakeCube () {
+		if (intake.get() != Value.kReverse) //check if already extended
+			extendIntake();
+		left.set(ControlMode.PercentOutput, 1);
+		Robot.carriage.outtakeCube(-1);
 	}
 	
 	public void stop()  {
-		leftIntake.set(ControlMode.PercentOutput, 0);
-		rightIntake.set(ControlMode.PercentOutput, 0);
+		left.set(ControlMode.PercentOutput, 0);
 	}
+	
 	public void initDefaultCommand()  {
 		setDefaultCommand(new IntakeCommand());
 	}
