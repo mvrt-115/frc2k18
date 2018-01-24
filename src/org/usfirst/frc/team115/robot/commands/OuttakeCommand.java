@@ -4,30 +4,31 @@ import org.usfirst.frc.team115.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveWithJoystick extends Command {
-	public DriveWithJoystick() {
-		requires(Robot.drivetrain);
+/**
+ * An example command.  You can replace me with your own command.
+ */
+public class OuttakeCommand extends Command {
+	
+	public OuttakeCommand() {
+		requires(Robot.intake);
 	}
 
 	protected void initialize() {
-		
 	}
-	
+
 	protected void execute() {
-		Robot.drivetrain.drive(Robot.oi.getJoystick().getThrottle(),
-							   Robot.oi.getWheel(),
-							   Robot.oi.getQuickTurn());
+		Robot.intake.outtakeCube();
 	}
-	
+
 	protected boolean isFinished() {
-		return false;
+		return !(Robot.oi.outtakePressed());
 	}
-	
+
 	protected void end() {
-		Robot.drivetrain.stop();
+		Robot.intake.stop();
 	}
-	
+
 	protected void interrupted() {
 		end();
 	}
-}	
+}

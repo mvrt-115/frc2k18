@@ -3,6 +3,7 @@ package org.usfirst.frc.team115.robot;
 
 import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
+import org.usfirst.frc.team115.robot.subsystems.Elevator;
 import org.usfirst.frc.team115.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -12,6 +13,10 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import org.usfirst.frc.team115.robot.auton.DriveAutoLine;
+import org.usfirst.frc.team115.robot.auton.DriveScale;
+import org.usfirst.frc.team115.robot.auton.DriveSwitch;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,6 +31,11 @@ public class Robot extends IterativeRobot {
 	public static DriveTrain drivetrain;
 	public static Intake intake;
 	public static Carriage carriage;
+	public static Elevator elevator;
+
+	public static char gameRobotStartingConfig;
+	public static char gameSwitchConfig;
+	public static char gameScaleConfig;
 	
 	DigitalInput limitSwitch;
 
@@ -42,7 +52,15 @@ public class Robot extends IterativeRobot {
 		drivetrain = new DriveTrain();
 		intake = new Intake();
 		carriage = new Carriage();
+		elevator = new Elevator();
+		
 		limitSwitch = new DigitalInput(0);
+
+		chooser.addDefault("Do Nothing", null);
+		chooser.addObject("Drive Auto Line", new DriveAutoLine());
+		chooser.addObject("Drive Scale", new DriveScale());
+		chooser.addObject("Drive Switch", new DriveSwitch());
+
 		SmartDashboard.putData("Auto mode", chooser);
 	}
 
@@ -82,6 +100,17 @@ public class Robot extends IterativeRobot {
 		 * = new MyAutoCommand(); break; case "Default Auto": default:
 		 * autonomousCommand = new ExampleCommand(); break; }
 		 */
+
+		//Read game configuration via FMS and robot position via Driverstation
+		//https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
+		gameData = DriverStation.getInstance().getGameSpecificMessage();
+		String robotStartingPos;
+		SmartDashboard.getString("Starting Position: ", robotStartingPos); //A, B, C
+
+		gameRobotStartingConfig = robotStartingPos.charAt(0); //A,B,C from left to right
+		gameSwitchConfig = gameData.charAt(0); //L,R from driver view
+		gameScaleConfig = gameData.charAt(1); //L,R from driver view
+
 
 		// schedule the autonomous command (example)
 		if (autonomousCommand != null)
