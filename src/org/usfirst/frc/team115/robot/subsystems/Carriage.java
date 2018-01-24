@@ -9,27 +9,27 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Carriage extends Subsystem {
 	
-	private TalonSRX leftCarriage;
-	private TalonSRX rightCarriage;
+	private TalonSRX left, right;
 	
 	public Carriage()  {
-		leftCarriage = new TalonSRX(24);
-		rightCarriage = new TalonSRX(25);
+		left = new TalonSRX(5);	
+		right = new TalonSRX(6);
+		
+		right.set(ControlMode.Follower, left.getDeviceID());
 	}
 	
-	public void intakeCube (double leftSpeed, double rightSpeed) 
-	{
-		leftCarriage.set(ControlMode.PercentOutput, leftSpeed);
-		rightCarriage.set(ControlMode.PercentOutput, rightSpeed);
+	public void intakeCube (double motorSpeed) {
+		left.set(ControlMode.PercentOutput, motorSpeed);
 	}
 	
-	public void outtakeCube (double motorSpeed) 
-	{
-		leftCarriage.set(ControlMode.Follower, rightCarriage.getDeviceID() );
-		rightCarriage.set(ControlMode.PercentOutput, motorSpeed);
+	public void outtakeCube (double motorSpeed) { //motorSpeed should be negative
+		left.set(ControlMode.PercentOutput, (motorSpeed > 0 ? -1.0 : 1.0) * motorSpeed);
 	}
 	
-	@Override
+	public void stop()  {
+		left.set(ControlMode.PercentOutput, 0);
+	}
+	
 	protected void initDefaultCommand() {
 		setDefaultCommand(new CarriageCommand());
 	}

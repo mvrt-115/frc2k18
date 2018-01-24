@@ -13,11 +13,17 @@ public class Constants {
 	public static double kDriveP = 0.0;
 	public static double kDriveI = 0.0;
 	public static double kDriveD = 0.0;
+	public static double kDriveF = 0.0;
+	
+	public static double kElevatorP = 0.0;
+	public static double kElevatorI = 0.0;
+	public static double kElevatorD = 0.0;
+	public static double kElevatorF = 0.0;
 
-	public static double kTurnP = 0.003;
+	public static double kTurnP = 0.0;
 	public static double kTurnI = 0.0;
 	public static double kTurnD = 0.0;
-
+	
 	public static int kLeftAchannel = 4;
 	public static int kLeftBchannel = 5;
 	public static int kRightAchannel = 6;
@@ -33,10 +39,17 @@ public class Constants {
 
 	public static int kThrottle = 0;
 	public static int kWheel = 1;
-	public static int kQuickTurn = 1;
+	public static int kQuickTurn = 5;
 
 	public static double kWinchSpeed = 1;
 	public static int kWinchMotor = 13;
 	public static int kOperatorJoystick = 0;
 	public static int kWinchButton = 1;
+	
+	public static int kIntakePortA;
+	public static int kIntakePortB;
+	
+	public static int kPIDLoopIdx;
+	public static int kTimeoutMs;
+	public static int kSlotIdx;
 }
