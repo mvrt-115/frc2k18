@@ -1,10 +1,11 @@
 package org.usfirst.frc.team115.robot.auton;
 
-import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
-import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.commands.ElevateToScale;
 
-public class DriveScale {
+import edu.wpi.first.wpilibj.command.CommandGroup;
+
+public class DriveScale extends CommandGroup {
 	
 	// need "PidTurn", "DriveForDistance"
 	public DriveScale() {

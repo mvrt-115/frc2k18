@@ -1,9 +1,10 @@
 package org.usfirst.frc.team115.robot.auton;
 
-import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Robot;
 
-public class DriveAutoLine {
+import edu.wpi.first.wpilibj.command.CommandGroup;
+
+public class DriveAutoLine extends CommandGroup{
 
 	// need "PidTurn", "DriveForDistance"
 	public DriveAutoLine() {

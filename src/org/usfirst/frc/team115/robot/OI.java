@@ -60,8 +60,8 @@ public class OI {
 		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
 		highSwitchElevate.whenPressed(new ElevateToScale("high"));
 
-		manualElevate.whenPressed(new manualElevate())
-		zeroElevator.whenPressed(new zeroElevator());
+		manualElevate.whenPressed(new ManualElevate());
+		zeroElevator.whenPressed(new ZeroElevator());
 	}
 	
 	public double getThrottle() {
