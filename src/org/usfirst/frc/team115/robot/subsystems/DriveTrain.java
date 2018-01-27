@@ -12,22 +12,25 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class DriveTrain extends Subsystem implements PIDOutput {
 	TalonSRX frontLeft, backLeft, frontRight, backRight;
+	public static PIDController PIDController;
 	
 	private static final double SENSITIVITY = 0.75;
 	private DoubleSolenoid shifter;
 	private boolean isHighGear;
 	private DoubleFunction<Double> limiter = limiter(-1.0, 1.0);
-
+	
 //	private double oldWheel = 0.0;
 //	private double negativeInertiaAccumulator = 0.0;
 	private double quickStopAccumulator = 0.0;
 	private double wheelDeadband = 0.02;
 	private double throttleDeadband = 0.02;
+	
 	
 	public DriveTrain() {
 		frontLeft = new TalonSRX(0);
@@ -193,7 +196,8 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	}
 
 	public void setTurnSetpoint(double angle) {
-		
+		PIDController.enable();
+		PIDController.setSetpoint(angle);
 	}
 	
 	protected void initDefaultCommand() {

@@ -1,7 +1,10 @@
 package org.usfirst.frc.team115.robot.auton;
 
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.commands.DriveForDistance;
 import org.usfirst.frc.team115.robot.commands.ElevateToScale;
+import org.usfirst.frc.team115.robot.commands.PidTurn;
+import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -29,6 +32,6 @@ public class DriveScale extends CommandGroup {
 			}
 		}
 		addSequential(new ElevateToScale("default"));
-		addSequential(new Outtake());
+		addSequential(new OuttakeCommand());
 	}
 }

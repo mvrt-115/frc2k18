@@ -1,6 +1,9 @@
 package org.usfirst.frc.team115.robot.auton;
 
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.commands.DriveForDistance;
+import org.usfirst.frc.team115.robot.commands.PidTurn;
+import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -15,6 +18,7 @@ public class DriveAutoLine extends CommandGroup{
 			addSequential(new PidTurn(-90));
 			addSequential(new DriveForDistance(12.4655));
 		}
+		
 		else
 			addSequential(new DriveForDistance(14.5));
 	}

@@ -1,7 +1,10 @@
 package org.usfirst.frc.team115.robot.auton;
 
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.commands.DriveForDistance;
 import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
+import org.usfirst.frc.team115.robot.commands.PidTurn;
+import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 
@@ -55,6 +58,6 @@ public class DriveSwitch extends CommandGroup {
 			}
 		}
 		addSequential(new ElevateToSwitch("default")); //Regular height
-		addSequential(new Outtake());
+		addSequential(new OuttakeCommand());
 	}
 }
