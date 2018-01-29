@@ -47,7 +47,7 @@ public class OI {
 		defaultScaleElevate = new JoystickButton(operatorPanel, 3);
 		highScaleElevate = new JoystickButton(operatorPanel, 4);
 		
-		manualElevate = new JoystickButton(operatorPanel, 5);
+		// manualElevate = new JoystickButton(operatorPanel, 5);
 		zeroElevator = new JoystickButton(operatorPanel, 6);
 		
 		intake.whenPressed(new IntakeCommand());
@@ -60,8 +60,12 @@ public class OI {
 		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
 		highSwitchElevate.whenPressed(new ElevateToScale("high"));
 
-		manualElevate.whenPressed(new ManualElevate());
+		// manualElevate.whenPressed(new ManualElevate());
 		zeroElevator.whenPressed(new ZeroElevator());
+	}
+
+	public double getManualElevate() {
+		return operatorPanel.getRawAxis(0);
 	}
 	
 	public double getThrottle() {

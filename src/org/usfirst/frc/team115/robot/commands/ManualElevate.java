@@ -11,8 +11,8 @@ public class ManualElevate extends Command{
 	}
 	
 	public void execute() {
-		if(Robot.oi.manualElevatePressed())
-			Robot.elevator.manualElevate();
+		// if(Robot.oi.manualElevatePressed())
+		Robot.elevator.manualElevate(Robot.oi.getManualElevate());
 		
 	}
 

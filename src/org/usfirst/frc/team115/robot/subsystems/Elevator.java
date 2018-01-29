@@ -1,6 +1,7 @@
 package org.usfirst.frc.team115.robot.subsystems;
 
 import org.usfirst.frc.team115.robot.Constants;
+import org.usfirst.frc.team115.robot.commands.ManualElevate;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -57,8 +58,9 @@ public class Elevator extends Subsystem {
 		left.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 	}
 	
-	public void manualElevate() {
-		left.set(ControlMode.PercentOutput, 1);
+	public void manualElevate(double throttle) {
+		double dampener = 0.95;
+		left.set(ControlMode.PercentOutput, dampener*throttle);
 	}
 	
 	public void setElevatorSetpoint(double height) { //meters
@@ -74,7 +76,7 @@ public class Elevator extends Subsystem {
 		left.set(ControlMode.PercentOutput, 0);
 	}
 	protected void initDefaultCommand() {
-		
+		setDefaultCommand(new ManualElevate())
 	}
 
 }
