@@ -76,7 +76,7 @@ public class Elevator extends Subsystem {
 		left.set(ControlMode.PercentOutput, 0);
 	}
 	protected void initDefaultCommand() {
-		setDefaultCommand(new ManualElevate())
+		setDefaultCommand(new ManualElevate());
 	}
 
 }

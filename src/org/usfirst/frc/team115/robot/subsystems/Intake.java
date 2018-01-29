@@ -1,7 +1,10 @@
 package org.usfirst.frc.team115.robot.subsystems;
 
+
 import org.usfirst.frc.team115.robot.Constants;
+import org.usfirst.frc.team115.robot.Robot;
 import org.usfirst.frc.team115.robot.commands.IntakeCommand;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -18,7 +21,6 @@ public class Intake extends Subsystem {
 	public DigitalInput breakbeam;
 
 	public Intake()  {
-		requires(Robot.carriage);
 		left = new TalonSRX(16);	//left cantalon port tbd
 		right = new TalonSRX(17);	//right cantalon port tbd
 		right.set(ControlMode.Follower, left.getDeviceID());
