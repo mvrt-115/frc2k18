@@ -46,20 +46,20 @@ public class Constants {
 	public static int kOperatorJoystick = 0;
 	public static int kWinchButton = 1;
 	
-	public static int kIntakePortA;
-	public static int kIntakePortB;
+	public static int kIntakePortA = 5;
+	public static int kIntakePortB = 6;
 	
 	public static int kPIDLoopIdx;
-	public static int kTimeoutMs;
+	public static int kTimeoutMs = 0;
 	public static int kSlotIdx;
 
 
 	// need to add extra height for carriage, current heights are equal to the switch/scale heights
 	// in feet
-	public static int kLowScaleHeight = 4;
-	public static int kDefaultScaleHeight = 5;
-	public static int kHighScaleHeight = 6;
+	public static double kLowScaleHeight = 4;
+	public static double kDefaultScaleHeight = 5;
+	public static double kHighScaleHeight = 6;
 
-	public static int kDefaultSwitchHeight = 1.5625; //1 ft. 6-3/4 in
-	public static int kHighSwitchHeight = 1.5625;
+	public static double kDefaultSwitchHeight = 1.5625; //1 ft. 6-3/4 in
+	public static double kHighSwitchHeight = 1.5625;
 }

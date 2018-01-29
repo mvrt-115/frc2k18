@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
 
 	TalonSRX left, right;
+	boolean limitCurrent = true;
 	
 	public Elevator() {
 		left = new TalonSRX(4);
@@ -31,8 +32,15 @@ public class Elevator extends Subsystem {
 		/* set the peak and nominal outputs */
 		left.configNominalOutputForward(0, Constants.kTimeoutMs);
 		left.configNominalOutputReverse(0, Constants.kTimeoutMs);
-		left.configPeakOutputForward(1, Constants.kTimeoutMs);
-		left.configPeakOutputReverse(-1, Constants.kTimeoutMs);
+		
+		if (limitCurrent) {
+			left.configPeakOutputForward(0.3, Constants.kTimeoutMs);
+			left.configPeakOutputReverse(-0.3, Constants.kTimeoutMs);
+		}
+		else {
+			left.configPeakOutputForward(1, Constants.kTimeoutMs);
+			left.configPeakOutputReverse(-1, Constants.kTimeoutMs);
+		}
 		
 		/* set closed loop gains in slot0 - see documentation */
 		left.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
