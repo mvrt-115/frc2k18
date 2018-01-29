@@ -1,5 +1,6 @@
 package org.usfirst.frc.team115.robot;
 
+import org.usfirst.frc.team115.robot.Constants;
 
 import org.usfirst.frc.team115.robot.commands.IntakeCommand;
 import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
@@ -65,7 +66,7 @@ public class OI {
 	}
 
 	public double getManualElevate() {
-		return operatorPanel.getRawAxis(0);
+		return operatorPanel.getRawAxis(Constants.kManualElevate);
 	}
 	
 	public double getThrottle() {

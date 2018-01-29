@@ -40,6 +40,7 @@ public class Constants {
 	public static int kThrottle = 0;
 	public static int kWheel = 1;
 	public static int kQuickTurn = 5;
+	public static int kManualElevate = 1;
 
 	public static double kWinchSpeed = 1;
 	public static int kWinchMotor = 13;
