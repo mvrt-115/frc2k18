@@ -59,7 +59,7 @@ public class Elevator extends Subsystem {
 	}
 	
 	public void manualElevate(double throttle) {
-		double dampener = 0.95;
+		double dampener = 1.00;
 		left.set(ControlMode.PercentOutput, dampener*throttle);
 	}
 	

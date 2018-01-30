@@ -15,9 +15,9 @@ public class Constants {
 	public static double kDriveD = 0.0;
 	public static double kDriveF = 0.0;
 	
-	public static double kElevatorP = 0.0;
-	public static double kElevatorI = 0.0;
-	public static double kElevatorD = 0.0;
+	public static double kElevatorP = 61.756;
+	public static double kElevatorI = 0.000;
+	public static double kElevatorD = 28.199;
 	public static double kElevatorF = 0.0;
 
 	public static double kTurnP = 0.0;
