@@ -12,8 +12,8 @@ public class Carriage extends Subsystem {
 	private TalonSRX left, right;
 	
 	public Carriage()  {
-		left = new TalonSRX(5);	
-		right = new TalonSRX(6);
+		left = new TalonSRX(50);	
+		right = new TalonSRX(55);
 		
 		right.set(ControlMode.Follower, left.getDeviceID());
 	}

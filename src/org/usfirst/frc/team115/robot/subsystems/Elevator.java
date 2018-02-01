@@ -10,16 +10,18 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends Subsystem {
 
 	TalonSRX left, right;
-	boolean limitCurrent = true;
+	boolean limitCurrent = false;
 	
 	public Elevator() {
-		left = new TalonSRX(4);
-		right = new TalonSRX(5);
+		left = new TalonSRX(3);
+		right = new TalonSRX(9);
 		right.set(ControlMode.Follower, left.getDeviceID());
+		right.setInverted(true);
 		
 		/* first choose the sensor */
 		left.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
@@ -58,9 +60,18 @@ public class Elevator extends Subsystem {
 		left.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 	}
 	
+	public double handleDeadband(double val, double deadband) {
+		return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
+	}
+	
 	public void manualElevate(double throttle) {
-		double dampener = 1.00;
-		left.set(ControlMode.PercentOutput, dampener*throttle);
+		throttle *= -1.0;
+		throttle = handleDeadband(throttle, 0.1);
+		SmartDashboard.putNumber("Applied Voltage", throttle * 12.0);
+		SmartDashboard.putNumber("Applied Current",  left.getOutputCurrent());
+		SmartDashboard.putNumber("Left Encoder Reading", left.getSensorCollection().getQuadraturePosition());
+		SmartDashboard.putNumber("Right Encoder Reading", left.getSensorCollection().getQuadraturePosition());
+		left.set(ControlMode.PercentOutput, throttle);
 	}
 	
 	public void setElevatorSetpoint(double height) { //meters

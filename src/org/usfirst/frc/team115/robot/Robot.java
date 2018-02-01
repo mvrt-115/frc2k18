@@ -8,7 +8,10 @@ import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
 import org.usfirst.frc.team115.robot.subsystems.Intake;
 
-import edu.wpi.first.wpilibj.DigitalInput;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -36,7 +39,9 @@ public class Robot extends IterativeRobot {
 	public static char gameSwitchConfig;
 	public static char gameScaleConfig;
 	
-	DigitalInput limitSwitch;
+	
+	
+//	DigitalInput limitSwitch;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
@@ -47,13 +52,13 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		oi = new OI();
+		
 		drivetrain = new DriveTrain();
 		intake = new Intake();
 		carriage = new Carriage();
 		elevator = new Elevator();
-		
-		limitSwitch = new DigitalInput(0);
+		oi = new OI();
+//		limitSwitch = new DigitalInput(0);
 
 		chooser.addDefault("Do Nothing", null);
 		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
@@ -170,7 +175,16 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		SmartDashboard.putBoolean("Limit Switch Pressed", limitSwitch.get());
+//		SmartDashboard.putBoolean("Limit Switch Pressed", limitSwitch.get());
+		
+		SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
+		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());
+		SmartDashboard.putNumber("Right Vel", drivetrain.getRightVel());
+		SmartDashboard.putNumber("Left Vel", drivetrain.getLeftVel());
+		SmartDashboard.putNumber("Current Dist", drivetrain.getCurrentDist());
+		SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
+
+		
 	}
 
 	

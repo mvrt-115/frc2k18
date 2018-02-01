@@ -36,20 +36,20 @@ public class OI {
 
 	public OI() {
 		driverJoystick = new Joystick(0);
-		intake = new JoystickButton(driverJoystick, 0);	
-		outtake = new JoystickButton(driverJoystick, 1); 
+		intake = new JoystickButton(driverJoystick, Constants.kIntake);	
+		outtake = new JoystickButton(driverJoystick, Constants.kOuttake); 
 		
 		operatorPanel = new Joystick(1);
 		
-		defaultSwitchElevate = new JoystickButton(operatorPanel, 0);
-		highSwitchElevate = new JoystickButton(operatorPanel, 1);
+		defaultSwitchElevate = new JoystickButton(operatorPanel, 3);
+		highSwitchElevate = new JoystickButton(operatorPanel, 4);
 		
-		lowScaleElevate = new JoystickButton(operatorPanel, 2);
-		defaultScaleElevate = new JoystickButton(operatorPanel, 3);
-		highScaleElevate = new JoystickButton(operatorPanel, 4);
+		lowScaleElevate = new JoystickButton(operatorPanel, 8);
+		defaultScaleElevate = new JoystickButton(operatorPanel, 6);
+		highScaleElevate = new JoystickButton(operatorPanel, 7);
 		
-		// manualElevate = new JoystickButton(operatorPanel, 5);
-		zeroElevator = new JoystickButton(operatorPanel, 6);
+		manualElevate = new JoystickButton(operatorPanel, 5);
+		zeroElevator = new JoystickButton(operatorPanel, 9);
 		
 		intake.whenPressed(new IntakeCommand());
 		outtake.whenPressed(new OuttakeCommand());
@@ -67,14 +67,15 @@ public class OI {
 
 	public double getManualElevate() {
 		return operatorPanel.getRawAxis(Constants.kManualElevate);
-	}
+//		return operatorPanel.getY();
+	} 
 	
 	public double getThrottle() {
-		return driverJoystick.getRawAxis(0);
+		return driverJoystick.getRawAxis(Constants.kThrottle);
 	}
 	
 	public double getWheel() {
-		return driverJoystick.getRawAxis(5);
+		return driverJoystick.getRawAxis(Constants.kWheel);
 	}
 	
 	public boolean getQuickTurn() {

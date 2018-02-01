@@ -17,11 +17,12 @@ public class ManualElevate extends Command{
 	}
 
 	protected boolean isFinished() {
-		 return !Robot.oi.manualElevatePressed();
+		return false;
+		// return !Robot.oi.manualElevatePressed();
 	}
 
 	public void end() {
-		Robot.elevator.zero();
+//		Robot.elevator.zero();
 	}
 
 }
