@@ -12,19 +12,25 @@ public class ElevateToSwitch extends Command {
 		this.configuration = configuration;
 		requires(Robot.elevator);
 	}
-	public void execute() {
-		if (configuration == "high")
-			Robot.elevator.setElevatorSetpoint(Constants.kHighSwitchHeight);
-		else if (configuration == "default")
+
+	public void initialize() {
+//		if (configuration == "high")
+//			Robot.elevator.setElevatorSetpoint(Constants.kHighSwitchHeight);
+//		if (configuration == "default")
 			Robot.elevator.setElevatorSetpoint(Constants.kDefaultSwitchHeight);
-	}	
+	}
+
+	public void execute() {
+		if(Robot.elevator.getError() <= 455.0) {
+			Robot.elevator.hold();
+		} 
+	}
 
 	@Override
 	protected boolean isFinished() {
-		return Robot.oi.manualElevatePressed();
+		return false;
 	}
 
 	public void end() {
-		Robot.elevator.zero();
 	}
 }

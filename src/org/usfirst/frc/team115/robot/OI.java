@@ -54,12 +54,12 @@ public class OI {
 		intake.whenPressed(new IntakeCommand());
 		outtake.whenPressed(new OuttakeCommand());
 		
-		defaultSwitchElevate.whenPressed(new ElevateToSwitch("default"));
-		highSwitchElevate.whenPressed(new ElevateToSwitch("high"));
+		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
+		highScaleElevate.whenPressed(new ElevateToScale("high"));
 		lowScaleElevate.whenPressed(new ElevateToScale("low"));
 		
-		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
-		highSwitchElevate.whenPressed(new ElevateToScale("high"));
+		defaultSwitchElevate.whenPressed(new ElevateToSwitch("default"));
+		highSwitchElevate.whenPressed(new ElevateToSwitch("high"));
 
 		// manualElevate.whenPressed(new ManualElevate());
 		zeroElevator.whenPressed(new ZeroElevator());
@@ -82,6 +82,10 @@ public class OI {
 		return driverJoystick.getRawButton(Constants.kQuickTurn);
 	}
 	
+	public boolean getHoldPosition() {
+		return operatorPanel.getRawButton(1);
+	}
+	
 	public boolean intakePressed() {
 		return intake.get();
 	}
@@ -92,5 +96,9 @@ public class OI {
 		
 	public boolean manualElevatePressed() {
 		return manualElevate.get();
+	}
+
+	public boolean getElevateToSwitch() {
+		return defaultSwitchElevate.get();
 	}
 }

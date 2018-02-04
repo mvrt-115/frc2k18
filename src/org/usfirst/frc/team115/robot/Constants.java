@@ -15,9 +15,9 @@ public class Constants {
 	public static double kDriveD = 0.0;
 	public static double kDriveF = 0.0;
 	
-	public static double kElevatorP = 61.756;
+	public static double kElevatorP = 2.4;
 	public static double kElevatorI = 0.000;
-	public static double kElevatorD = 28.199;
+	public static double kElevatorD = 1;
 	public static double kElevatorF = 0.0;
 
 	public static double kTurnP = 0.0;
@@ -36,8 +36,8 @@ public class Constants {
 	public static int kWheel = 0; //right analog left/right
 	public static int kQuickTurn = 5;
 	public static int kManualElevate = 1;
-	public static int kIntake = 3; //x button
-	public static int kOuttake = 4; //y button
+	public static int kIntake = 6; //x button
+	public static int kOuttake = 3; //y button
 
 //	public static double kWinchSpeed = 1;
 //	public static int kWinchMotor = 13;
@@ -47,19 +47,19 @@ public class Constants {
 //	public static int kIntakePortA = 5;
 //	public static int kIntakePortB = 6;
 	
-	public static int kPIDLoopIdx;
+	public static int kPIDLoopIdx = 0;
 	public static int kTimeoutMs = 0;
-	public static int kSlotIdx;
+	public static int kSlotIdx = 0;
 
 
 	// need to add extra height for carriage, current heights are equal to the switch/scale heights
-	// in feet
-	public static double kLowScaleHeight = 4;
-	public static double kDefaultScaleHeight = 5;
-	public static double kHighScaleHeight = 6;
+	// in meters
+	public static double offset = 0.127;
+	public static double kLowScaleHeight = 1.2912 - offset;
+	public static double kDefaultScaleHeight = 1.524 - offset;
+	public static double kHighScaleHeight = 1.5;
 
-	public static double kDefaultSwitchHeight = 1.5625; //1 ft. 6-3/4 in
-	public static double kHighSwitchHeight = 1.5625;
+	public static double kDefaultSwitchHeight = 0.47625 + 0.33 - 0.127; //1 ft. 6-3/4 in
 	
 	//encoder testing values
 	public static double kInchesPerTicks;

@@ -19,11 +19,12 @@ public class Intake extends Subsystem {
 //	public DigitalInput breakbeam;
 
 	public Intake()  {
-		left = new TalonSRX(16);	//left cantalon port tbd
-		right = new TalonSRX(17);	//right cantalon port tbd
-		right.set(ControlMode.Follower, left.getDeviceID());
+		left = new TalonSRX(41);	//left cantalon port tbd
+		right = new TalonSRX(13);	//right cantalon port tbd
+		//right.set(ControlMode.Follower, left.getDeviceID());
+		//right.setInverted(true);
 //		breakbeam = new DigitalInput(2);
-		intake = new DoubleSolenoid(1, 3, 4);
+//		intake = new DoubleSolenoid(1, 3, 4);
 	}
 	
 	public void extendIntake() {
@@ -35,21 +36,24 @@ public class Intake extends Subsystem {
 	}
 	
 	public void intakeCube () {
-		if (intake.get() != Value.kReverse) //check if already extended
-			extendIntake();
-		left.set(ControlMode.PercentOutput, 1);
-		Robot.carriage.intakeCube(1);
+		//if (intake.get() != Value.kReverse) //check if already extended
+			//extendIntake();
+		left.set(ControlMode.PercentOutput, -0.65);
+		right.set(ControlMode.PercentOutput, 0.65);
+		Robot.carriage.intakeCube(-0.45);
 	}
 	
 	public void outtakeCube () {
-		if (intake.get() != Value.kReverse) //check if already extended
-			extendIntake();
-		left.set(ControlMode.PercentOutput, 1);
+		//if (intake.get() != Value.kReverse) //check if already extended
+			//extendIntake();
+		left.set(ControlMode.PercentOutput, 0.65);
+		right.set(ControlMode.PercentOutput, -0.65);
 		Robot.carriage.outtakeCube(-1);
 	}
 	
 	public void stop()  {
 		left.set(ControlMode.PercentOutput, 0);
+		right.set(ControlMode.PercentOutput, 0);
 	}
 	
 	public void initDefaultCommand()  {

@@ -13,7 +13,7 @@ public class ElevateToScale extends Command {
 		requires(Robot.elevator);
 	}
 
-	public void execute() {
+	public void initialize() {
 		if (configuration == "high")
 			Robot.elevator.setElevatorSetpoint(Constants.kHighScaleHeight); //placing from higher than regular height (eg cubes already stacked on first layer)
 		else if (configuration == "default")
@@ -21,14 +21,20 @@ public class ElevateToScale extends Command {
 		else if (configuration == "low")
 			Robot.elevator.setElevatorSetpoint(Constants.kLowScaleHeight); //placing at lower height (eg if scale in possession)
 	}
+	
+	public void execute() {
+		if(Robot.elevator.getError() <= 455.0) {
+			Robot.elevator.hold();
+		}
+	}
 
 	@Override
 	protected boolean isFinished() {
-		return Robot.oi.manualElevatePressed();
+		return false;
 	}
 
 	public void end() {
-		Robot.elevator.zero();
+		
 	}
 
 }

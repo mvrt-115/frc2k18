@@ -12,10 +12,11 @@ public class Carriage extends Subsystem {
 	private TalonSRX left, right;
 	
 	public Carriage()  {
-		left = new TalonSRX(50);	
-		right = new TalonSRX(55);
+		left = new TalonSRX(41);	
+		right = new TalonSRX(1);
 		
 		right.set(ControlMode.Follower, left.getDeviceID());
+		right.setInverted(true);
 	}
 	
 	public void intakeCube (double motorSpeed) {

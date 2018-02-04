@@ -1,6 +1,7 @@
 package org.usfirst.frc.team115.robot.subsystems;
 
 import org.usfirst.frc.team115.robot.Constants;
+import org.usfirst.frc.team115.robot.Robot;
 import org.usfirst.frc.team115.robot.commands.ManualElevate;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -15,49 +16,59 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Elevator extends Subsystem {
 
 	TalonSRX left, right;
-	boolean limitCurrent = false;
+	boolean limitVoltage = true;
 	
 	public Elevator() {
 		left = new TalonSRX(3);
 		right = new TalonSRX(9);
 		right.set(ControlMode.Follower, left.getDeviceID());
+		left.setInverted(false);
 		right.setInverted(true);
 		
-		/* first choose the sensor */
+		/* First choose the sensor. */
 		left.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-		left.setSensorPhase(true);
-		left.setInverted(false);
+		left.setSensorPhase(false);
 		
-		/* Set relevant frame periods to be at least as fast as periodic rate*/
+		/* Set relevant frame periods to be at least as fast as periodic rate. */
 		left.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
 		left.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 	
-		/* set the peak and nominal outputs */
-		left.configNominalOutputForward(0, Constants.kTimeoutMs);
-		left.configNominalOutputReverse(0, Constants.kTimeoutMs);
+		/* Set the peak and nominal outputs */
+//		left.configNominalOutputForward(0, Constants.kTimeoutMs);
+//		left.configNominalOutputReverse(0, Constants.kTimeoutMs);
 		
-		if (limitCurrent) {
-			left.configPeakOutputForward(0.3, Constants.kTimeoutMs);
-			left.configPeakOutputReverse(-0.3, Constants.kTimeoutMs);
+		if (limitVoltage) {
+			left.configPeakOutputForward(0.6, Constants.kTimeoutMs);
+			left.configPeakOutputReverse(-0.6, Constants.kTimeoutMs);
+			left.configNominalOutputForward(0.5 / 12, 0);
+			left.configNominalOutputReverse(-0.5 / 12, 0);
 		}
 		else {
-			left.configPeakOutputForward(1, Constants.kTimeoutMs);
-			left.configPeakOutputReverse(-1, Constants.kTimeoutMs);
+			left.configPeakOutputForward(0.2, Constants.kTimeoutMs);
+			left.configPeakOutputReverse(-0.2, Constants.kTimeoutMs);
 		}
 		
 		/* set closed loop gains in slot0 - see documentation */
 		left.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-		left.config_kF(0, Constants.kElevatorF, Constants.kTimeoutMs);
+		left.configPeakOutputForward(1, Constants.kTimeoutMs);
+		left.configPeakOutputReverse(-0.5, Constants.kTimeoutMs);
+		left.configNominalOutputForward(0.6/12.0, 0);
+		left.configNominalOutputReverse(-0.6/12.0, 0);
+//		left.config_kF(0, Constants.kElevatorF, Constants.kTimeoutMs);
 		left.config_kP(0, Constants.kElevatorP, Constants.kTimeoutMs);
-		left.config_kI(0, Constants.kElevatorI, Constants.kTimeoutMs);
+//		left.config_kI(0, Constants.kElevatorI, Constants.kTimeoutMs);
 		left.config_kD(0, Constants.kElevatorD, Constants.kTimeoutMs);
-	
+		
+		left.configAllowableClosedloopError(Constants.kSlotIdx, 455, Constants.kTimeoutMs);
+		
 		/* set acceleration and vcruise velocity - see documentation */
-		left.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
+		left.configMotionCruiseVelocity(10000, Constants.kTimeoutMs);
 		left.configMotionAcceleration(6000, Constants.kTimeoutMs);
 		
 		/* zero the sensor */
 		left.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+		left.configForwardSoftLimitThreshold((int)(convertMetersToTicks(1.5 + 0.0254)), 0);
+		left.configForwardSoftLimitEnable(true, 0);
 	}
 	
 	public double handleDeadband(double val, double deadband) {
@@ -66,21 +77,50 @@ public class Elevator extends Subsystem {
 	
 	public void manualElevate(double throttle) {
 		throttle *= -1.0;
-		throttle = handleDeadband(throttle, 0.1);
+		if(Robot.oi.getHoldPosition()) {
+			throttle = 0.5 / 12;
+		}
+		//throttle = handleDeadband(throttle, 0.1);
 		SmartDashboard.putNumber("Applied Voltage", throttle * 12.0);
 		SmartDashboard.putNumber("Applied Current",  left.getOutputCurrent());
-		SmartDashboard.putNumber("Left Encoder Reading", left.getSensorCollection().getQuadraturePosition());
-		SmartDashboard.putNumber("Right Encoder Reading", left.getSensorCollection().getQuadraturePosition());
+		SmartDashboard.putNumber("Left Encoder Reading", left.getSelectedSensorPosition(0));
+	//	SmartDashboard.putNumber("Right Encoder Reading", left.getSensorCollection().getQuadraturePosition());
 		left.set(ControlMode.PercentOutput, throttle);
 	}
 	
+	double setpoint = 0.0;
 	public void setElevatorSetpoint(double height) { //meters
-		double targetPos = height * 39.3701 / (2.0 * 2.0 * Math.PI) * 4096; //pulley radius yet to be determined
-		left.set(ControlMode.MotionMagic, targetPos); 
+		setpoint = convertMetersToTicks(height);
+		left.set(ControlMode.Position, setpoint);
+	}
+	
+	public void log() {
+		SmartDashboard.putNumber("Applied Current",  left.getOutputCurrent());
+		SmartDashboard.putNumber("Applied Voltage",  left.getMotorOutputVoltage());
+		SmartDashboard.putNumber("Current Elevator Position", convertTicksToInches(left.getSelectedSensorPosition(0)));
+		SmartDashboard.putNumber("Elevator Setpoint Ticks", setpoint);
+		SmartDashboard.putNumber("Elevator Error", convertTicksToInches(setpoint - left.getSelectedSensorPosition(0)));
+	}
+	
+	
+	public double getError() {
+		return Math.abs(left.getSelectedSensorPosition(0) - setpoint);
+	}
+	
+	public double convertTicksToInches(double ticks) {
+		return (ticks/4096) * 1.432 * Math.PI;
+	}
+	
+	public double convertMetersToTicks(double goal) {
+		return ((goal / 0.0254) * (1 / (1.282 * Math.PI)) * 4096); 
 	}
 	
 	public void zero() {
-		setElevatorSetpoint(0.0);
+		left.setSelectedSensorPosition(0, 0, 0);
+	}
+	
+	public void hold() {
+		left.set(ControlMode.PercentOutput, 0.5 / 12);
 	}
 	
 	public void stop() {

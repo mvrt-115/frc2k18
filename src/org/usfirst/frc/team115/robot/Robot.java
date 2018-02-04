@@ -183,6 +183,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Left Vel", drivetrain.getLeftVel());
 		SmartDashboard.putNumber("Current Dist", drivetrain.getCurrentDist());
 		SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
+		elevator.log();
 
 		
 	}

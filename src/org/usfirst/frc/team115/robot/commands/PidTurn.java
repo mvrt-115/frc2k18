@@ -5,7 +5,7 @@ import org.usfirst.frc.team115.robot.Robot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class PidTurn extends Command{
+public class PidTurn extends Command {
 	
 	private double setpoint;
 	private int tolerance;
