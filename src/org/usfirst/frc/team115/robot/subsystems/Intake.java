@@ -6,6 +6,7 @@ import org.usfirst.frc.team115.robot.commands.IntakeCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -15,13 +16,13 @@ public class Intake extends Subsystem {
 	
 	private DoubleSolenoid intake;
 	private TalonSRX left;
-	private TalonSRX right;
+	private VictorSPX right;
 //	public DigitalInput breakbeam;
 
 	public Intake()  {
-		left = new TalonSRX(41);	//left cantalon port tbd
-		right = new TalonSRX(13);	//right cantalon port tbd
-		//right.set(ControlMode.Follower, left.getDeviceID());
+		left = new TalonSRX(6);	//left cantalon port tbd
+		right = new VictorSPX(7);	//right cantalon port tbd
+		right.set(ControlMode.Follower, left.getDeviceID());
 		//right.setInverted(true);
 //		breakbeam = new DigitalInput(2);
 //		intake = new DoubleSolenoid(1, 3, 4);

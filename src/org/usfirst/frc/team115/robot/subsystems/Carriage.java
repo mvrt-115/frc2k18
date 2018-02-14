@@ -4,16 +4,18 @@ import org.usfirst.frc.team115.robot.commands.CarriageCommand;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Carriage extends Subsystem {
 	
-	private TalonSRX left, right;
+	private TalonSRX left;
+	private VictorSPX right;
 	
 	public Carriage()  {
-		left = new TalonSRX(41);	
-		right = new TalonSRX(1);
+		left = new TalonSRX(5);	
+		right = new VictorSPX(8);
 		
 		right.set(ControlMode.Follower, left.getDeviceID());
 		right.setInverted(true);

@@ -10,17 +10,17 @@ package org.usfirst.frc.team115.robot;
  */
 public class Constants {
 
-	public static double kDriveP = 0.0;
-	public static double kDriveI = 0.0;
-	public static double kDriveD = 0.0;
-	public static double kDriveF = 0.0;
+	public static double kDriveP = 0.5;
+	public static double kDriveI = 0.6;
+	public static double kDriveD = 0.8;
+	public static double kDriveF = 0.9;
 	
 	public static double kElevatorP = 2.4;
 	public static double kElevatorI = 0.000;
 	public static double kElevatorD = 1;
 	public static double kElevatorF = 0.0;
 
-	public static double kTurnP = 0.0;
+	public static double kTurnP = 2.0;
 	public static double kTurnI = 0.0;
 	public static double kTurnD = 0.0;
 

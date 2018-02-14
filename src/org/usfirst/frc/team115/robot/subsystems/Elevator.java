@@ -8,19 +8,20 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.PIDOutput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends Subsystem {
 
-	TalonSRX left, right;
+	TalonSRX left;
+	VictorSPX right;
 	boolean limitVoltage = true;
 	
 	public Elevator() {
-		left = new TalonSRX(3);
-		right = new TalonSRX(9);
+		left = new TalonSRX(5);
+		right = new VictorSPX(8);
 		right.set(ControlMode.Follower, left.getDeviceID());
 		left.setInverted(false);
 		right.setInverted(true);

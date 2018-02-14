@@ -1,14 +1,11 @@
 package org.usfirst.frc.team115.robot;
 
-import org.usfirst.frc.team115.robot.auton.DriveAutoLine;
-import org.usfirst.frc.team115.robot.auton.DriveScale;
-import org.usfirst.frc.team115.robot.auton.DriveSwitch;
+import org.usfirst.frc.team115.robot.auton.DriveTimedAutoLine;
 import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
 import org.usfirst.frc.team115.robot.subsystems.Intake;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -55,7 +52,7 @@ public class Robot extends IterativeRobot {
 		oi = new OI();
 //		limitSwitch = new DigitalInput(0);
 
-		chooser.addDefault("Do Nothing", null);
+		// chooser.addDefault("Do Nothing", null);
 		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
 		// chooser.addObject("Drive Scale", new DriveScale());
 		// chooser.addObject("Drive Switch", new DriveSwitch());
@@ -102,44 +99,45 @@ public class Robot extends IterativeRobot {
 
 		//Read game configuration via FMS and robot position via Driverstation
 		//https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
-		String gameData = DriverStation.getInstance().getGameSpecificMessage();
-		String robotStartingPos = "";
-		SmartDashboard.getString("Starting Position: ", robotStartingPos); //A, B, C
-
-		int scalePriority, switchPriority, driveLinePriority;
-		String tmp = "";
-		SmartDashboard.getString("Scale Priority Value (1-3): ", tmp);
-		scalePriority = Integer.parseInt(tmp);
-		SmartDashboard.getString("Switch Priority Value (1-3): ", tmp);
-		switchPriority = Integer.parseInt(tmp);
-		SmartDashboard.getString("DriveLine Priority Value (1-3): ", tmp);
-		driveLinePriority = Integer.parseInt(tmp);
-		
-		gameRobotStartingConfig = robotStartingPos.charAt(0); //A,B,C from left to right
-		gameSwitchConfig = gameData.charAt(0); //L,R from driver view
-		gameScaleConfig = gameData.charAt(1); //L,R from driver view
-
-		if (driveLinePriority == 1) {
-			(new DriveAutoLine()).start();
-		}
-		else {
-			if (scalePriority == 1) {
-				//check if Scale is too far
-				if ((gameRobotStartingConfig == 'A' && gameScaleConfig == 'R') || 
-					(gameRobotStartingConfig == 'C' && gameScaleConfig == 'L')) {
-					if (driveLinePriority == 2)
-						(new DriveAutoLine()).start();
-					else if (switchPriority == 2) {
-						(new DriveSwitch()).start();
-					}
-				}
-				else
-					(new DriveScale()).start();
-			}
-			else if (switchPriority == 1) {
-				(new DriveSwitch()).start();
-			}
-		}
+//		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+//		String robotStartingPos = "";
+//		SmartDashboard.getString("Starting Position: ", robotStartingPos); //A, B, C
+//
+//		int scalePriority, switchPriority, driveLinePriority;
+//		String tmp = "";
+//		SmartDashboard.getString("Scale Priority Value (1-3): ", tmp);
+//		scalePriority = Integer.parseInt(tmp);
+//		SmartDashboard.getString("Switch Priority Value (1-3): ", tmp);
+//		switchPriority = Integer.parseInt(tmp);
+//		SmartDashboard.getString("DriveLine Priority Value (1-3): ", tmp);
+//		driveLinePriority = Integer.parseInt(tmp);
+//		
+//		gameRobotStartingConfig = robotStartingPos.charAt(0); //A,B,C from left to right
+//		gameSwitchConfig = gameData.charAt(0); //L,R from driver view
+//		gameScaleConfig = gameData.charAt(1); //L,R from driver view
+//
+//		if (driveLinePriority == 1) {
+//			(new DriveAutoLine()).start();
+//		}
+//		else {
+//			if (scalePriority == 1) {
+//				//check if Scale is too far
+//				if ((gameRobotStartingConfig == 'A' && gameScaleConfig == 'R') || 
+//					(gameRobotStartingConfig == 'C' && gameScaleConfig == 'L')) {
+//					if (driveLinePriority == 2)
+//						(new DriveAutoLine()).start();
+//					else if (switchPriority == 2) {
+//						(new DriveSwitch()).start();
+//					}
+//				}
+//				else
+//					(new DriveScale()).start();
+//			}
+//			else if (switchPriority == 1) {
+//				(new DriveSwitch()).start();
+//			}
+//		}
+		(new DriveTimedAutoLine(15, 0.0)).start();
 
 		// schedule the autonomous command (example)
 		// if (autonomousCommand != null)
@@ -152,6 +150,9 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		Scheduler.getInstance().run();
+//		SmartDashboard.putNumber("Encoder R", drivetrain.frontRight.getSelectedSensorPosition(0));
+//		SmartDashboard.putNumber("Encoder L", drivetrain.frontLeft.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("navX output (in autonperiodic)", Robot.drivetrain.getYaw());
 	}
 
 	@Override
@@ -171,16 +172,25 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		
+		SmartDashboard.putNumber("Encoder R", drivetrain.frontRight.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Encoder L", drivetrain.frontLeft.getSelectedSensorPosition(0));
+
 //		SmartDashboard.putBoolean("Limit Switch Pressed", limitSwitch.get());
 		
-		SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
+	/*	SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
 		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());
 		SmartDashboard.putNumber("Right Vel", drivetrain.getRightVel());
 		SmartDashboard.putNumber("Left Vel", drivetrain.getLeftVel());
 		SmartDashboard.putNumber("Current Dist", drivetrain.getCurrentDist());
 		SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
+	*/
 		elevator.log();
 
+	//	 chooser.addDefault("Do Nothing", null);
+		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
+		// chooser.addObject("Drive Scale", new DriveScale());
+		// chooser.addObject("Drive Switch", new DriveSwitch());
 		
 	}
 

@@ -11,6 +11,7 @@ import org.usfirst.frc.team115.robot.commands.ManualElevate;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 /**
