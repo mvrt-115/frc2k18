@@ -37,13 +37,21 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	private double wheelDeadband = 0.02;
 	private double throttleDeadband = 0.02;
 
+	private enum PidState {
+		TURN,
+		DRIVESTRAIGHT,
+		DISTANCE,
+		NULL
+	}
+	
+	public PidState state = PidState.NULL;
 	
 	private boolean limitCurrent = false;
 
 	public DriveTrain() {
 //		isHighGear = true;
-		frontLeft = new TalonSRX(11); //11
-		backLeft = new TalonSRX(9); //9
+		frontLeft = new TalonSRX(9); //11
+		backLeft = new TalonSRX(11); //9
 		backLeft.set(ControlMode.Follower, frontLeft.getDeviceID());
 //		frontLeft.setInverted(true);
 //		backLeft.setInverted(true);
@@ -68,11 +76,11 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 		frontRight.setSensorPhase(true);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate */
-		frontLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
+		/*frontLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
 		frontLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 
 		frontRight.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
-		frontRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
+		frontRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);*/
 
 		/* set the peak and nominal outputs */
 		frontLeft.configNominalOutputForward(0, Constants.kTimeoutMs);
@@ -127,17 +135,16 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 //		backLeft.clearStickyFaults(Constants.kTimeoutMs);
 //		backRight.clearStickyFaults(Constants.kTimeoutMs);
 		
-		PIDController = new PIDController(0, 0, 0, this, this);
+//		PIDController = new PIDController(0, 0, 0, this, this);
 		
 		navX = new AHRS(SPI.Port.kMXP);
-//		navX.zeroYaw();
-		navX.reset();
-		
+
 		turnController = new PIDController(Constants.kTurnP, Constants.kTurnI, Constants.kTurnD, navX, this, 0.005);
 		turnController.setInputRange(-180, 180);
 		turnController.setContinuous(true);
-		turnController.setOutputRange(-0.2, 0.2);
+		turnController.setOutputRange(-1.0, 1.0);
 		turnController.setAbsoluteTolerance(1);
+//		turnController.setAbsoluteTolerance(1);
 	}
 
 	public void drive(double throttle, double wheel, boolean quickturn) {
@@ -248,8 +255,9 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	}
 	
 	public void setTurnSetpoint(double angle) {
-		turnController.enable();
+		state = PidState.TURN;
 		turnController.setSetpoint(angle);
+//		turnController.enable();
 	}
 
 	protected void initDefaultCommand() {
@@ -269,6 +277,7 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	}
 	
 	public void pidDriveStraight(double angle) {
+		state = PidState.DRIVESTRAIGHT;
 		turnController.setSetpoint(angle);
 		turnController.enable();
 	}
@@ -311,6 +320,14 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 //		rightEncoder.reset();
 //	}
 	
+	public double getCurrentAngle() {
+		return navX.pidGet();
+	}
+	
+	public double getTurnOutput() {
+		return turnController.get();
+	}
+	
 	public double pidGet() {
 		SmartDashboard.putNumber("pidGet", navX.pidGet());
 		return navX.pidGet();
@@ -318,13 +335,24 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 
 	@Override
 	public void pidWrite(double output) {
-		setLeftRightMotorOutputs(output, output);
+		if (state == PidState.TURN) {
+			if(output < 0.2 && output >= 0.000000) {
+				output = 0.2;
+			} else if(output > -0.2 && output <= 0.000000) {
+				output = -0.2;
+			}
+			setLeftRightMotorOutputs(output, -output);
+		}
 	}
 
 	@Override
 	public void setPIDSourceType(PIDSourceType pidSource) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public void zeroYaw() {
+		navX.zeroYaw();
 	}
 
 	@Override

@@ -15,7 +15,6 @@ public class DriveTimedAutoLine extends TimedCommand {
 	}
 	
 	public void initialize() {
-//		Robot.drivetrain.navX.reset();
 		Robot.drivetrain.pidDriveStraight(heading);
 	}
 	
@@ -24,8 +23,9 @@ public class DriveTimedAutoLine extends TimedCommand {
 	public void execute() {
 		turnOutput = Robot.drivetrain.getDriveStraightOutput();
 		SmartDashboard.putNumber("DriveTimedAutoLine turnOutput", turnOutput);
-		SmartDashboard.putNumber("navX output (in timedautoline)", Robot.drivetrain.getYaw());
-		Robot.drivetrain.setLeftRightMotorOutputs((0.0 + turnOutput), (0.0 - turnOutput));
+
+		Robot.drivetrain.setLeftRightMotorOutputs((0.3 + turnOutput), (0.3 - turnOutput));
+//		Robot.drivetrain.setLeftRightMotorOutputs(turnOutput, -turnOutput);
 	}
 
 	public void end() {

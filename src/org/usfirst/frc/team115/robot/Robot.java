@@ -1,11 +1,13 @@
 package org.usfirst.frc.team115.robot;
 
 import org.usfirst.frc.team115.robot.auton.DriveTimedAutoLine;
+import org.usfirst.frc.team115.robot.commands.PidTurn;
 import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
 import org.usfirst.frc.team115.robot.subsystems.Intake;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 	
+	DigitalInput BreakBeam = new DigitalInput(0);
 	public static OI oi;
 	public static DriveTrain drivetrain;
 	public static Intake intake;
@@ -33,7 +36,7 @@ public class Robot extends IterativeRobot {
 	public static char gameSwitchConfig;
 	public static char gameScaleConfig;
 	
-//	DigitalInput limitSwitch;
+	DigitalInput breakBeam;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
@@ -50,6 +53,9 @@ public class Robot extends IterativeRobot {
 		carriage = new Carriage();
 		elevator = new Elevator();
 		oi = new OI();
+		
+		breakBeam = new DigitalInput(0);
+
 //		limitSwitch = new DigitalInput(0);
 
 		// chooser.addDefault("Do Nothing", null);
@@ -73,6 +79,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+//		SmartDashboard.putNumber("navX output", Robot.drivetrain.getYaw());
+
 	}
 
 	/**
@@ -88,8 +96,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		// autonomousCommand = chooser.getSelected();
-
+		
+		drivetrain.zeroYaw();
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -137,8 +145,9 @@ public class Robot extends IterativeRobot {
 //				(new DriveSwitch()).start();
 //			}
 //		}
-		(new DriveTimedAutoLine(15, 0.0)).start();
+		new DriveTimedAutoLine(5, 0.0).start();
 
+		
 		// schedule the autonomous command (example)
 		// if (autonomousCommand != null)
 		//	autonomousCommand.start();
@@ -149,10 +158,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		
+		
+		
 		Scheduler.getInstance().run();
 //		SmartDashboard.putNumber("Encoder R", drivetrain.frontRight.getSelectedSensorPosition(0));
 //		SmartDashboard.putNumber("Encoder L", drivetrain.frontLeft.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("navX output (in autonperiodic)", Robot.drivetrain.getYaw());
+		SmartDashboard.putNumber("turnController error", Robot.drivetrain.turnController.getError());
+//		SmartDashboard.putNumber("Pid Driving State", Robot.drivetrain.state);
 	}
 
 	@Override
@@ -173,10 +187,12 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
+		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
+		
 		SmartDashboard.putNumber("Encoder R", drivetrain.frontRight.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Encoder L", drivetrain.frontLeft.getSelectedSensorPosition(0));
 
-//		SmartDashboard.putBoolean("Limit Switch Pressed", limitSwitch.get());
+		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
 		
 	/*	SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
 		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());

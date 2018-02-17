@@ -20,9 +20,18 @@ public class Constants {
 	public static double kElevatorD = 1;
 	public static double kElevatorF = 0.0;
 
-	public static double kTurnP = 2.0;
+//	public static double kTurnP = 0.00575;
+//	public static double kTurnI = 0.0;
+//	public static double kTurnD = 0.02560;
+	
+	public static double kDriveStraightP = 0.0255;
+	public static double kDriveStraightI = 0.0;
+	public static double kDriveStraightD = 0.0;
+	
+	public static double kTurnP = 1.0 /64.0;
 	public static double kTurnI = 0.0;
-	public static double kTurnD = 0.0;
+	public static double kTurnD = 0.00538;
+
 
 	public static final int kTopLeftPin = 0;
 	public static final int kTopRightPin = 1;
