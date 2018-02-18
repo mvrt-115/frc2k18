@@ -1,7 +1,6 @@
 package org.usfirst.frc.team115.robot;
 
-import org.usfirst.frc.team115.robot.auton.DriveTimedAutoLine;
-import org.usfirst.frc.team115.robot.commands.PidTurn;
+import org.usfirst.frc.team115.robot.auton.DriveAutoLine;
 import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
@@ -36,6 +35,7 @@ public class Robot extends IterativeRobot {
 	public static char gameSwitchConfig;
 	public static char gameScaleConfig;
 	
+	
 	DigitalInput breakBeam;
 
 	Command autonomousCommand;
@@ -48,15 +48,16 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		
+		
 		drivetrain = new DriveTrain();
 		intake = new Intake();
 		carriage = new Carriage();
 		elevator = new Elevator();
 		oi = new OI();
 		
-		breakBeam = new DigitalInput(0);
+//		breakBeam = new DigitalInput(0);
 
-//		limitSwitch = new DigitalInput(0);
+//		limitSwitch = new Digita  lInput(0);
 
 		// chooser.addDefault("Do Nothing", null);
 		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
@@ -73,13 +74,13 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-
+		
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-//		SmartDashboard.putNumber("navX output", Robot.drivetrain.getYaw());
+		SmartDashboard.putNumber("navX output", Robot.drivetrain.getYaw());
 
 	}
 
@@ -145,7 +146,8 @@ public class Robot extends IterativeRobot {
 //				(new DriveSwitch()).start();
 //			}
 //		}
-		new DriveTimedAutoLine(5, 0.0).start();
+//		new DriveTimedAutoLine(1, 0.0).start();
+		(new DriveAutoLine()).start();
 
 		
 		// schedule the autonomous command (example)
@@ -158,13 +160,10 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		
-		
-		
+			
 		Scheduler.getInstance().run();
 //		SmartDashboard.putNumber("Encoder R", drivetrain.frontRight.getSelectedSensorPosition(0));
 //		SmartDashboard.putNumber("Encoder L", drivetrain.frontLeft.getSelectedSensorPosition(0));
-		SmartDashboard.putNumber("navX output (in autonperiodic)", Robot.drivetrain.getYaw());
 		SmartDashboard.putNumber("turnController error", Robot.drivetrain.turnController.getError());
 //		SmartDashboard.putNumber("Pid Driving State", Robot.drivetrain.state);
 	}
@@ -187,12 +186,12 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
 		
-		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
+//		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
 		
 		SmartDashboard.putNumber("Encoder R", drivetrain.frontRight.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Encoder L", drivetrain.frontLeft.getSelectedSensorPosition(0));
 
-		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
+//		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
 		
 	/*	SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
 		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());

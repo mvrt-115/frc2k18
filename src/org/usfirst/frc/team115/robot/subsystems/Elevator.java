@@ -85,7 +85,6 @@ public class Elevator extends Subsystem {
 		SmartDashboard.putNumber("Applied Voltage", throttle * 12.0);
 		SmartDashboard.putNumber("Applied Current",  left.getOutputCurrent());
 		SmartDashboard.putNumber("Left Encoder Reading", left.getSelectedSensorPosition(0));
-	//	SmartDashboard.putNumber("Right Encoder Reading", left.getSensorCollection().getQuadraturePosition());
 		left.set(ControlMode.PercentOutput, throttle);
 	}
 	
@@ -102,7 +101,6 @@ public class Elevator extends Subsystem {
 		SmartDashboard.putNumber("Elevator Setpoint Ticks", setpoint);
 		SmartDashboard.putNumber("Elevator Error", convertTicksToInches(setpoint - left.getSelectedSensorPosition(0)));
 	}
-	
 	
 	public double getError() {
 		return Math.abs(left.getSelectedSensorPosition(0) - setpoint);

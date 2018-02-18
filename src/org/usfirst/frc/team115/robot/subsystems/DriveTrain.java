@@ -5,9 +5,9 @@ import java.util.function.DoubleFunction;
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.commands.CheesyDriveJoystick;
 
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -207,6 +207,11 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 		frontLeft.set(ControlMode.PercentOutput, left);
 	}
 
+	public void setMotionProfile(TrajectoryPoint leftPoint, TrajectoryPoint rightPoint) {
+		frontLeft.pushMotionProfileTrajectory(leftPoint);
+		frontRight.pushMotionProfileTrajectory(rightPoint);
+	}
+	
 	public void shift() {
 		// TODO Add code for shifting from low -> high or vice versa
 		if (isHighGear) {
@@ -336,10 +341,10 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	@Override
 	public void pidWrite(double output) {
 		if (state == PidState.TURN) {
-			if(output < 0.2 && output >= 0.000000) {
-				output = 0.2;
-			} else if(output > -0.2 && output <= 0.000000) {
-				output = -0.2;
+			if(output < 0.1 && output >= 0.000000) {
+				output = 0.1;
+			} else if(output > -0.1 && output <= 0.000000) {
+				output = -0.1;
 			}
 			setLeftRightMotorOutputs(output, -output);
 		}

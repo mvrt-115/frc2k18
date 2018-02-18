@@ -28,9 +28,9 @@ public class Constants {
 	public static double kDriveStraightI = 0.0;
 	public static double kDriveStraightD = 0.0;
 	
-	public static double kTurnP = 1.0 /64.0;
+	public static double kTurnP = 0.5 * 1.0 / 90.0;
 	public static double kTurnI = 0.0;
-	public static double kTurnD = 0.00538;
+	public static double kTurnD = 0.5 * 1 / (8.0 * 3.0); //0.00538;
 
 
 	public static final int kTopLeftPin = 0;

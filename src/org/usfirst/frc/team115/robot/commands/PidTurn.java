@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class PidTurn extends Command {
 	
 	private double setpoint;
-	private double tolerance = 0.25;
+	private double tolerance = 1.0;
 	
 	public PidTurn(double setpoint) {
 		this.setpoint = setpoint;
@@ -26,7 +26,7 @@ public class PidTurn extends Command {
 	}
 
 	protected boolean isFinished() {
-		return Math.abs(Robot.drivetrain.turnController.getError()) == tolerance;//Math.abs(setpoint - Robot.drivetrain.getCurrentAngle()) <= tolerance;
+		return Math.abs(Robot.drivetrain.turnController.getError()) <= tolerance;//Math.abs(setpoint - Robot.drivetrain.getCurrentAngle()) <= tolerance;
 	}
 	
 	public void end() {
