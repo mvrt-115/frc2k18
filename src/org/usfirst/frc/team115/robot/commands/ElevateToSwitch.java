@@ -1,8 +1,10 @@
 package org.usfirst.frc.team115.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Robot;
+
+import edu.wpi.first.wpilibj.command.Command;
+
 
 public class ElevateToSwitch extends Command {
 

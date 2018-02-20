@@ -6,24 +6,33 @@ import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Hardware;
 import org.usfirst.frc.team115.robot.commands.CheesyDriveJoystick;
 
+import com.ctre.phoenix.motion.TrajectoryPoint;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveTrain extends Subsystem implements PIDOutput {
-	public static PIDController PIDController;
+public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 
 	private static final double SENSITIVITY = 0.90;
-	private DoubleSolenoid shifter;
+
+	public PIDController turnController;
+	public PIDController driveStraightController;
+	public PIDController driveDistanceController;
+
+	public PidState state = PidState.NULL;
+	public DriveStraightPIDOutput driveStraightOutput;
+
 	private boolean isHighGear;
 	private DoubleFunction<Double> limiter = limiter(-0.9, 0.9);
 
@@ -31,18 +40,49 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 	private double wheelDeadband = 0.03;
 	private double throttleDeadband = 0.02;
 
-	private Encoder leftEncoder, rightEncoder;
-
 	private boolean limitCurrent = false;
+	private boolean autonSpeedLimit = false;
+	
+	private double defaultSpeed;
+	private double turnSpeed;
+	private double nominalDriveOutput = 0.3;
+	private double nominalTurnOutput = 0.35;
+
+	private enum PidState {
+		TURN,
+		DRIVESTRAIGHT,
+		DISTANCE,
+		NULL
+	}
+
+	public class DriveStraightPIDOutput implements PIDOutput {
+
+		PidState state;
+		PIDOutput drivetrain;
+		double output;
+
+		public DriveStraightPIDOutput(PidState state, PIDOutput drivetrain) {
+			this.state = state;
+			this.drivetrain = drivetrain;
+		}
+
+		public void setState(PidState state) {
+			this.state = state;
+		}
+
+		public double getOutput() { return output; }
+
+		public void pidWrite(double output) {
+			if (state == PidState.DISTANCE)
+				this.output = output;
+			else if (state == PidState.DRIVESTRAIGHT)
+				drivetrain.pidWrite(output);
+		}
+	};
 
 	public DriveTrain() {
-//		leftEncoder = new Encoder(Constants.kLeftAchannel, Constants.kLeftBchannel);
-//		leftEncoder.setReversceDirection(true);
-//		rightEncoder = new Encoder(Constants.kRightAchannel, Constants.kRightBchannel);
-
-		// rightEncoder.setReverseDirection(true);  
-//		leftEncoder.setDistancePerPulse(Constants.kInchesPerTicks);
-//		rightEncoder.setDistancePerPulse(Constants.kInchesPerTicks);
+		Hardware.shifter = new DoubleSolenoid(1, 3, 4);
+		Hardware.navX = new AHRS(SPI.Port.kMXP);
 
 		Hardware.driveFrontLeft = new TalonSRX(Constants.kDriveFrontLeftTalonID);
 		Hardware.driveBackLeft = new TalonSRX(Constants.kDriveBackLeftTalonID);
@@ -63,57 +103,32 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		Hardware.driveFrontRight.setSensorPhase(true);
 		Hardware.driveFrontRight.setInverted(false);
 
-		/* Set relevant frame periods to be at least as fast as periodic rate */
-		//		Hardware.driveFrontLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
-		//		Hardware.driveFrontLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
-
-		//		Hardware.driveFrontRight.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, Constants.kTimeoutMs);
-		//		Hardware.driveFrontRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
-
-		/* set the peak and nominal outputs */
-		//		Hardware.driveFrontLeft.configNominalOutputForward(0, Constants.kTimeoutMs);
-		//		Hardware.driveFrontLeft.configNominalOutputReverse(0, Constants.kTimeoutMs);
-
 		if (limitCurrent) {
-			Hardware.driveFrontLeft.configPeakCurrentLimit(30, 0);
-			Hardware.driveFrontLeft.configContinuousCurrentLimit(20, 0);
-			Hardware.driveFrontLeft.configPeakCurrentDuration(10, 0);
-			Hardware.driveFrontLeft.enableCurrentLimit(true);
-		}
-		else {
+			Hardware.driveFrontLeft.configPeakOutputForward(0.3, Constants.kTimeoutMs);
+			Hardware.driveFrontLeft.configPeakOutputReverse(-0.3, Constants.kTimeoutMs);
+			Hardware.driveFrontRight.configPeakOutputForward(0.3, Constants.kTimeoutMs);
+			Hardware.driveFrontRight.configPeakOutputReverse(-0.3, Constants.kTimeoutMs);
+		} else if (autonSpeedLimit) {
+			Hardware.driveFrontLeft.configPeakOutputForward(0.6, Constants.kTimeoutMs);
+			Hardware.driveFrontLeft.configPeakOutputReverse(-0.6, Constants.kTimeoutMs);
+			Hardware.driveFrontRight.configPeakOutputForward(0.6, Constants.kTimeoutMs);
+			Hardware.driveFrontRight.configPeakOutputReverse(-0.6, Constants.kTimeoutMs);
+		} else {
 			Hardware.driveFrontLeft.configPeakOutputForward(1, Constants.kTimeoutMs);
 			Hardware.driveFrontLeft.configPeakOutputReverse(-1, Constants.kTimeoutMs);
-		}
-
-		//		frontLeft.configPeakOutputForward(1, Constants.kTimeoutMs);
-		//		frontLeft.configPeakOutputReverse(-1, Constants.kTimeoutMs);
-
-		//		Hardware.driveFrontRight.configNominalOutputForward(0, Constants.kTimeoutMs);
-		//		Hardware.driveFrontRight.configNominalOutputReverse(0, Constants.kTimeoutMs);
-
-		if (limitCurrent) {
-			Hardware.driveFrontRight.configPeakCurrentLimit(30, 0);
-			Hardware.driveFrontRight.configContinuousCurrentLimit(20, 0);
-			Hardware.driveFrontRight.configPeakCurrentDuration(10, 0);
-			Hardware.driveFrontRight.enableCurrentLimit(true);
-		}
-		else {
 			Hardware.driveFrontRight.configPeakOutputForward(1, Constants.kTimeoutMs);
 			Hardware.driveFrontRight.configPeakOutputReverse(-1, Constants.kTimeoutMs);
 		}
 
-		//		frontRight.configPeakOutputForward(1, Constants.kTimeoutMs);
-		//		frontRight.configPeakOutputReverse(-1, Constants.kTimeoutMs);
-
 		/* set closed loop gains in slot0 - see documentation */
 		Hardware.driveFrontLeft.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-		Hardware.driveFrontLeft.config_kF(0, Constants.kDriveF, Constants.kTimeoutMs);
+		Hardware.driveFrontLeft.config_kF(0, Constants.kDriveFrontLeftF, Constants.kTimeoutMs);
 		Hardware.driveFrontLeft.config_kP(0, Constants.kDriveP, Constants.kTimeoutMs);
 		Hardware.driveFrontLeft.config_kI(0, Constants.kDriveI, Constants.kTimeoutMs);
 		Hardware.driveFrontLeft.config_kD(0, Constants.kDriveD, Constants.kTimeoutMs);
 
 		Hardware.driveFrontRight.selectProfileSlot(Constants.kSlotIdx, Constants.kPIDLoopIdx);
-		Hardware.driveFrontRight.config_kF(0, Constants.kDriveF, Constants.kTimeoutMs);
+		Hardware.driveFrontRight.config_kF(0, Constants.kDriveFrontRightF, Constants.kTimeoutMs);
 		Hardware.driveFrontRight.config_kP(0, Constants.kDriveP, Constants.kTimeoutMs);
 		Hardware.driveFrontRight.config_kI(0, Constants.kDriveI, Constants.kTimeoutMs);
 		Hardware.driveFrontRight.config_kD(0, Constants.kDriveD, Constants.kTimeoutMs);
@@ -128,13 +143,25 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		/* zero the sensor */
 		Hardware.driveFrontLeft.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 		Hardware.driveFrontRight.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-		
-		shifter = new DoubleSolenoid(1, 3, 4);
 
+		turnController = new PIDController(Constants.kTurnP, Constants.kTurnI, Constants.kTurnD, Hardware.navX, this, 0.005);
+		turnController.setInputRange(-180, 180);
+		turnController.setContinuous(true);
+		turnController.setOutputRange(-1.0, 1.0);
+		turnController.setAbsoluteTolerance(1);
+
+		driveStraightOutput = new DriveStraightPIDOutput(state, this);
+		driveStraightController = new PIDController(Constants.kDriveStraightP, Constants.kDriveStraightI, Constants.kDriveStraightD, Hardware.navX, driveStraightOutput, 0.005);
+		driveStraightController.setInputRange(-180, 180);
+		driveStraightController.setContinuous(true);
+		driveStraightController.setOutputRange(-1.0, 1.0);
+		driveStraightController.setAbsoluteTolerance(1);
+
+		driveDistanceController = new PIDController(Constants.kDriveP, Constants.kDriveI, Constants.kDriveD, this, this, 0.005);
+		driveDistanceController.setOutputRange(-1.0, 1.0);
 	}
 
 	public void drive(double throttle, double wheel, boolean quickturn) {
-
 		wheel = handleDeadband(wheel, wheelDeadband);
 		throttle = handleDeadband(throttle, throttleDeadband);
 
@@ -188,20 +215,20 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		setLeftRightMotorOutputs(0.0, 0.0);
 	}
 
-	public void setLeftRightMotorOutputs(double left, double right) {
-		Hardware.driveFrontRight.set(ControlMode.PercentOutput, right);
-		Hardware.driveFrontLeft.set(ControlMode.PercentOutput, left);
+	
+	public void setMotionProfile(TrajectoryPoint leftPoint, TrajectoryPoint rightPoint) {
+		Hardware.driveFrontLeft.pushMotionProfileTrajectory(leftPoint);
+		Hardware.driveFrontRight.pushMotionProfileTrajectory(rightPoint);
 	}
 
 	public void shift() {
-		// TODO Add code for shifting from low -> high or vice versa
 		if (isHighGear) {
-			shifter.set(Value.kReverse);
+			Hardware.shifter.set(Value.kReverse);
 		} else {
-			shifter.set(Value.kForward);
+			Hardware.shifter.set(Value.kForward);
 		}
-		isHighGear = !isHighGear;
-	}
+		isHighGear = !isHighGear;	
+	} 
 
 	private DoubleFunction<Double> limiter(double minimum, double maximum) {
 		if (maximum < minimum) {
@@ -219,68 +246,193 @@ public class DriveTrain extends Subsystem implements PIDOutput {
 		};
 	}
 
-	public double handleDeadband(double val, double deadband) {
-		return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
-	}
 
 	private static double dampen(double wheel, double wheelNonLinearity) {
 		double factor = Math.PI * wheelNonLinearity;
 		return Math.sin(factor * wheel) / Math.sin(factor);
 	}
 
+	public double convertFeetToTicks(double feet) {
+		return feet * (12 / (2.0 * 2.0 * Math.PI)) * 4096;
+	}
+
+	public double convertTicksToFeet(double ticks) {
+		return (ticks / 4096.0) * (2.0 * 2.0 * Math.PI / 12);
+	}
+
+	double setpoint;
 	public void setDistanceSetpoint(double dist) {
-		double targetPos = dist * 12.0 / (4.0 * Math.PI) * 4096;
-		Hardware.driveFrontLeft.set(ControlMode.MotionMagic, targetPos);
-		Hardware.driveFrontRight.set(ControlMode.MotionMagic, targetPos);
+		double targetPos = convertFeetToTicks(dist); 
+		this.setpoint = targetPos;
+		Hardware.driveFrontLeft.set(ControlMode.Position, targetPos);
+		Hardware.driveFrontRight.set(ControlMode.Position, targetPos);
 	}
 
 	public void setTurnSetpoint(double angle) {
-		PIDController.enable();
-		PIDController.setSetpoint(angle);
+		if (state == PidState.DRIVESTRAIGHT) {
+			driveStraightController.disable();
+		}
+		state = PidState.TURN;
+		turnController.setSetpoint(angle);
+	}
+
+	public void setPeakSpeed(double speed) {
+		Hardware.driveFrontLeft.configPeakOutputForward(speed, Constants.kTimeoutMs);
+		Hardware.driveFrontLeft.configPeakOutputReverse(-speed, Constants.kTimeoutMs);
+		Hardware.driveFrontRight.configPeakOutputForward(speed, Constants.kTimeoutMs);
+		Hardware.driveFrontRight.configPeakOutputReverse(-speed, Constants.kTimeoutMs);
+	}
+
+
+	public void pidDriveStraight(double angle, double speed) {
+		if (state == PidState.TURN) {
+			turnController.disable();
+		}
+		else if (state == PidState.DISTANCE) {
+			defaultSpeed = 0.0;
+			driveStraightController.setSetpoint(angle);
+			driveStraightOutput.setState(PidState.DISTANCE);
+		}
+		else {
+			defaultSpeed = speed;
+			state = PidState.DRIVESTRAIGHT;
+			driveStraightController.setSetpoint(angle);
+			driveStraightOutput.setState(PidState.DRIVESTRAIGHT);
+		}
+	}
+
+	public void pidDriveDistance(double distanceInFeet) {
+		if (state == PidState.TURN) {
+			turnController.disable();
+		}
+		else if (state == PidState.DRIVESTRAIGHT) {
+			driveStraightController.disable();
+		}
+		this.setpoint = distanceInFeet;
+		state = PidState.DISTANCE;
+		driveDistanceController.setSetpoint(setpoint);
+	}
+
+	public double getDriveStraightOutput() {
+		return driveStraightController.get();
+	}
+
+	public double getYaw() {
+		return Hardware.navX.getYaw();
+	}
+
+	public double getTotalAngle(double delta) {
+		return (getYaw() + delta + 540)%360 - 180;
+	}
+
+	public double getCurrentAngle() {
+		return Hardware.navX.pidGet();
+	}
+
+	public double getTurnOutput() {
+		return turnController.get();
+	}
+
+	public void zeroYaw() {
+		Hardware.navX.zeroYaw();
+	}
+
+	public void zeroPosition() {
+		Hardware.driveFrontLeft.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+		Hardware.driveFrontRight.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
+	}
+
+	public double pidGet() {
+		if (state == PidState.TURN || state == PidState.DRIVESTRAIGHT)
+			return Hardware.navX.pidGet();
+		else if (state == PidState.DISTANCE) {
+			return getCurrentDist();//-getError();
+		}
+		return 0.0;
+	}
+
+	public void resetPidState() {
+		state = PidState.NULL;
+	}
+
+	@Override
+	public void pidWrite(double output) {
+		if (state == PidState.TURN) {
+			if (output >= 0.0)
+				output = Math.max(nominalTurnOutput, output);
+			else
+				output = Math.min(-nominalTurnOutput, output);
+			setLeftRightMotorOutputs(output, -output);
+		}
+		else if (state == PidState.DRIVESTRAIGHT) {
+			setLeftRightMotorOutputs(defaultSpeed + output, defaultSpeed - output);
+		}
+		else if (state == PidState.DISTANCE) {
+			if (output >= 0.0)
+				output = Math.max(nominalDriveOutput, output);
+			else
+				output = Math.min(-nominalDriveOutput, output);
+			turnSpeed = driveStraightOutput.getOutput();
+			SmartDashboard.putNumber("TurnSpeed", turnSpeed);
+			SmartDashboard.putNumber("Motor output", output);
+			setLeftRightMotorOutputs(output + turnSpeed, output - turnSpeed);
+		}
+	}
+
+	public double getError() {
+		SmartDashboard.putNumber("Setpoint", this.setpoint);
+		double error = this.setpoint - getCurrentDist();
+		SmartDashboard.putNumber("Error", error);
+		return error;
+	}
+	
+	public double getCurrentDist() {
+		double dist = convertTicksToFeet((Hardware.driveFrontRight.getSelectedSensorPosition(0) + Hardware.driveFrontLeft.getSelectedSensorPosition(0))/2.0);
+		SmartDashboard.putNumber("Current Dist (in feet)", dist);
+		return dist;
+	}
+	
+	@Override
+	public void setPIDSourceType(PIDSourceType pidSource) {}
+
+	@Override
+	public PIDSourceType getPIDSourceType() {
+		return PIDSourceType.kDisplacement;
+	}
+	
+	public void setLeftRightMotorOutputs(double left, double right) {
+		Hardware.driveFrontLeft.configNominalOutputForward(0, Constants.kTimeoutMs);
+		Hardware.driveFrontLeft.configNominalOutputReverse(0, Constants.kTimeoutMs);
+		Hardware.driveFrontRight.configNominalOutputForward(0, Constants.kTimeoutMs);
+		Hardware.driveFrontRight.configNominalOutputReverse(0, Constants.kTimeoutMs);
+
+		Hardware.driveFrontRight.set(ControlMode.PercentOutput, right);
+		Hardware.driveFrontLeft.set(ControlMode.PercentOutput, left);
+
+		SmartDashboard.putNumber("Calculated Left Motor Output", left);
+		SmartDashboard.putNumber("Calculated Right Motor Output", right);
 	}
 
 	protected void initDefaultCommand() {
 		setDefaultCommand(new CheesyDriveJoystick());
 	}
-
-	public double getCurrentDist() {
-		return (rightEncoder.getDistance() + leftEncoder.getDistance()) / 2;
-	}
-
-	public double getLeftDist() {
-		return leftEncoder.getDistance();
-	}
-
-	public double getRightDist() {
-		return rightEncoder.getDistance();
-	}
-
-	public double getLeftVel() {
-		return leftEncoder.getRate();
-	}
-
-	public double getRightVel() {
-		return rightEncoder.getRate();
-	}
-
-	public double getCurrentVel() {
-		return (leftEncoder.getRate() + rightEncoder.getRate()) / 2;
-	}
-
-	public void zeroPos() {
-		leftEncoder.reset();
-		rightEncoder.reset();
-	}
-
-	@Override
-	public void pidWrite(double output) {
-		setLeftRightMotorOutputs(-output, output);
+	
+	public double handleDeadband(double val, double deadband) {
+		return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
 	}
 	
-	
+	public void zeroDrive() {
+		zeroYaw();
+		Hardware.driveFrontRight.setSelectedSensorPosition(0, 0, 0);
+		Hardware.driveFrontLeft.setSelectedSensorPosition(0, 0, 0);
+	}
+
 	public void log() {
 		SmartDashboard.putNumber("Encoder L", Hardware.driveFrontLeft.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Encoder R", Hardware.driveFrontRight.getSelectedSensorPosition(0));
+		SmartDashboard.putNumber("Distance", getCurrentDist());
+		SmartDashboard.putNumber("Distance Error", getError());
+		SmartDashboard.putNumber("DriveDistanceController value", driveDistanceController.get());
 	}
-	
+
 }

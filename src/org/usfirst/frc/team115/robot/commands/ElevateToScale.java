@@ -26,6 +26,7 @@ public class ElevateToScale extends Command {
 	public void execute() {
 		if(Robot.elevator.getError() <= Robot.elevator.convertInchesToTicks(1.0)) {
 			Robot.elevator.hold();
+			Robot.carriage.outtakeCube(1.0);
 		}
 	}
 

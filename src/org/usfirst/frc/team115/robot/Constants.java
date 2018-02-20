@@ -10,10 +10,12 @@ package org.usfirst.frc.team115.robot;
  */
 public class Constants {
 
-	public static double kDriveP = 0.0;
-	public static double kDriveI = 0.0;
-	public static double kDriveD = 0.0;
-	public static double kDriveF = 0.0;
+	public static double kDriveP = 1.1 * 1.0/22.0; 
+	public static double kDriveI = 0.00;
+	public static double kDriveD = 1 / (8.0 * 4.5);
+	public static double kDriveFrontLeftF = 1023 * 0.7576 / 3488.0;
+	public static double kDriveFrontRightF = 1023 * 0.8591 / 5098.0;
+	
 	
 	public static double kElevatorP = 2.4;
 	public static double kElevatorI = 0.000;
@@ -22,8 +24,8 @@ public class Constants {
 	
 	public static int kIntakeLeftTalonID = 41;
 	public static int kIntakeRightTalonID = 13;
-	public static int kElevatorLeftTalonID = 9;  //9
-	public static int kElevatorRightTalonID = 3; //3
+	public static int kElevatorLeftTalonID = 9;
+	public static int kElevatorRightTalonID = 3; 
 	public static int kCarriageLeftTalonID = 42;
 	public static int kCarriageRightTalonID = 6;
 	public static int kDriveFrontLeftTalonID = 2;
@@ -31,9 +33,14 @@ public class Constants {
 	public static int kDriveBackLeftTalonID = 4;
 	public static int kDriveBackRightTalonID = 40;
 
-	public static double kTurnP = 0.0;
+	public static double kDriveStraightP = 1.0 / 15.0; //1/30.0;
+	public static double kDriveStraightI = 0.0;
+	public static double kDriveStraightD = 1 / (8.0 * 2.0); //1 / (8.0 * 1.5);
+	
+	public static double kTurnP = 1.0 / 96.50; //1.0 / 95.0; //old: 0.5 * 1.0 / 90.0;
 	public static double kTurnI = 0.0;
-	public static double kTurnD = 0.0;
+	public static double kTurnD = 1 / (8.0 * 2.05); //1 / (8.0 * 3.4); //old: 1 / (8.0 * 3.2);
+
 
 	public static final int kTopLeftPin = 0;
 	public static final int kTopRightPin = 1;
@@ -65,12 +72,5 @@ public class Constants {
 	public static double kDefaultScaleHeight = 0.97;
 	public static double kHighScaleHeight = 1.15;
 
-	public static double kDefaultSwitchHeight = 0.35; //1 ft. 6-3/4 in
-	
-	//encoder testing values
-	public static double kInchesPerTicks;
-//	public static int kLeftAchannel = 0;
-//	public static int kLeftBchannel = 1;
-//	public static int kRightAchannel = 2;
-//	public static int kRightBchannel = 3;
+	public static double kDefaultSwitchHeight = 0.35;
 }

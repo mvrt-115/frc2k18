@@ -30,6 +30,7 @@ public class Intake extends Subsystem {
 		Hardware.intakeRight.enableCurrentLimit(true);
 	}
 
+
 	public void extendIntake() {
 		Hardware.intakeExtendSolenoid.set(Value.kForward);
 	}
@@ -84,8 +85,7 @@ public class Intake extends Subsystem {
 	}
 
 	public void initDefaultCommand()  {
-		//		setDefa
-//		ultCommand(new IntakeCommand());
+//		setDefaultCommand(new IntakeCommand());
 	}
 
 }

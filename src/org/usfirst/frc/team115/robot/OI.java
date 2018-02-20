@@ -3,10 +3,8 @@ package org.usfirst.frc.team115.robot;
 import org.usfirst.frc.team115.robot.commands.ElevateToScale;
 import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
 import org.usfirst.frc.team115.robot.commands.IntakeCommand;
-import org.usfirst.frc.team115.robot.commands.ManualElevate;
 import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 import org.usfirst.frc.team115.robot.commands.WideIntakeCommand;
-import org.usfirst.frc.team115.robot.commands.ZeroElevator;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -26,7 +24,6 @@ public class OI {
 	
 	Joystick operatorPanel;
 	JoystickButton defaultSwitchElevate;
-	JoystickButton highSwitchElevate;
 	JoystickButton lowScaleElevate;
 	JoystickButton defaultScaleElevate;
 	JoystickButton highScaleElevate;
@@ -41,8 +38,8 @@ public class OI {
 		wideIntake = new JoystickButton(driverJoystick, 4);
 		
 		operatorPanel = new Joystick(1);
-		
 		outtake = new JoystickButton(operatorPanel, Constants.kOuttake); 
+
 		
 		defaultSwitchElevate = new JoystickButton(operatorPanel, Constants.kSwitch);
 		
@@ -62,9 +59,6 @@ public class OI {
 		lowScaleElevate.whenPressed(new ElevateToScale("low"));
 		
 		defaultSwitchElevate.whenPressed(new ElevateToSwitch());
-
-		zeroElevator.whenPressed(new ZeroElevator());
-		manualMode.whenPressed(new ManualElevate());
 	}
 
 	public boolean getManualMode() {
