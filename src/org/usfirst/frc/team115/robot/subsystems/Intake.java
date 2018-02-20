@@ -16,12 +16,12 @@ public class Intake extends Subsystem {
 	
 	private DoubleSolenoid intake;
 	private TalonSRX left;
-	private VictorSPX right;
+	private TalonSRX right;
 //	public DigitalInput breakbeam;
 
 	public Intake()  {
-		left = new TalonSRX(6);	//left cantalon port tbd
-		right = new VictorSPX(7);	//right cantalon port tbd
+		left = new TalonSRX(5);	//left cantalon port tbd
+		right = new TalonSRX(0);	//right cantalon port tbd
 		right.set(ControlMode.Follower, left.getDeviceID());
 		//right.setInverted(true);
 //		breakbeam = new DigitalInput(2);
@@ -49,7 +49,7 @@ public class Intake extends Subsystem {
 			//extendIntake();
 		left.set(ControlMode.PercentOutput, 0.65);
 		right.set(ControlMode.PercentOutput, -0.65);
-		Robot.carriage.outtakeCube(-1);
+		Robot.carriage.outtakeCube(1);
 	}
 	
 	public void stop()  {
@@ -58,7 +58,7 @@ public class Intake extends Subsystem {
 	}
 	
 	public void initDefaultCommand()  {
-		setDefaultCommand(new IntakeCommand());
+//		setDefaultCommand(new IntakeCommand());
 	}
 	
 }

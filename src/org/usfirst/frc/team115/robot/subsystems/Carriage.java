@@ -14,11 +14,12 @@ public class Carriage extends Subsystem {
 	private VictorSPX right;
 	
 	public Carriage()  {
-		left = new TalonSRX(5);	
-		right = new VictorSPX(8);
+		left = new TalonSRX(2);	
+		right = new VictorSPX(3);
 		
-		right.set(ControlMode.Follower, left.getDeviceID());
-		right.setInverted(true);
+		right.follow(left);
+//		right.set(ControlMode.Follower, left.getDeviceID());
+		right.setInverted(false);
 	}
 	
 	public void intakeCube (double motorSpeed) {
@@ -26,7 +27,7 @@ public class Carriage extends Subsystem {
 	}
 	
 	public void outtakeCube (double motorSpeed) { //motorSpeed should be negative
-		left.set(ControlMode.PercentOutput, (motorSpeed > 0 ? -1.0 : 1.0) * motorSpeed);
+		left.set(ControlMode.PercentOutput, motorSpeed);
 	}
 	
 	public void stop()  {
@@ -34,7 +35,7 @@ public class Carriage extends Subsystem {
 	}
 	
 	protected void initDefaultCommand() {
-		setDefaultCommand(new CarriageCommand());
+//		setDefaultCommand(new CarriageCommand());
 	}
 
 }

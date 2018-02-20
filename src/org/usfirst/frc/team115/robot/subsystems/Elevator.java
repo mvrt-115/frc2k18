@@ -15,14 +15,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends Subsystem {
 
-	TalonSRX left;
-	VictorSPX right;
-	boolean limitVoltage = true;
+	public TalonSRX left;
+	public VictorSPX right;
+	boolean limitVoltage = false;
 	
 	public Elevator() {
-		left = new TalonSRX(5);
-		right = new VictorSPX(8);
-		right.set(ControlMode.Follower, left.getDeviceID());
+		left = new TalonSRX(6); //9 //5
+		right = new VictorSPX(7); //10 //8
+//		right.set(ControlMode.Follower, left.getDeviceID());
+		right.follow(left);
 		left.setInverted(false);
 		right.setInverted(true);
 		
@@ -84,7 +85,7 @@ public class Elevator extends Subsystem {
 		//throttle = handleDeadband(throttle, 0.1);
 		SmartDashboard.putNumber("Applied Voltage", throttle * 12.0);
 		SmartDashboard.putNumber("Applied Current",  left.getOutputCurrent());
-		SmartDashboard.putNumber("Left Encoder Reading", left.getSelectedSensorPosition(0));
+//		SmartDashboard.putNumber("Left Encoder Reading", left.getSelectedSensorPosition(0));
 		left.set(ControlMode.PercentOutput, throttle);
 	}
 	
@@ -119,7 +120,7 @@ public class Elevator extends Subsystem {
 	}
 	
 	public void hold() {
-		left.set(ControlMode.PercentOutput, 0.5 / 12);
+		left.set(ControlMode.PercentOutput, 0.6 / 12);
 	}
 	
 	public void stop() {

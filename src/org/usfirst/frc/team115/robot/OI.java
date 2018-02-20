@@ -27,7 +27,6 @@ public class OI {
 	
 	Joystick operatorPanel;
 	JoystickButton defaultSwitchElevate;
-	JoystickButton highSwitchElevate;
 	JoystickButton lowScaleElevate;
 	JoystickButton defaultScaleElevate;
 	JoystickButton highScaleElevate;
@@ -42,14 +41,13 @@ public class OI {
 		
 		operatorPanel = new Joystick(1);
 		
-		defaultSwitchElevate = new JoystickButton(operatorPanel, 3);
-		highSwitchElevate = new JoystickButton(operatorPanel, 4);
+		defaultSwitchElevate = new JoystickButton(operatorPanel, 4);
 		
 		lowScaleElevate = new JoystickButton(operatorPanel, 8);
 		defaultScaleElevate = new JoystickButton(operatorPanel, 6);
 		highScaleElevate = new JoystickButton(operatorPanel, 7);
 		
-		manualElevate = new JoystickButton(operatorPanel, 5);
+		manualElevate = new JoystickButton(operatorPanel, 3);
 		zeroElevator = new JoystickButton(operatorPanel, 9);
 		
 		intake.whenPressed(new IntakeCommand());
@@ -59,10 +57,9 @@ public class OI {
 		highScaleElevate.whenPressed(new ElevateToScale("high"));
 		lowScaleElevate.whenPressed(new ElevateToScale("low"));
 		
-		defaultSwitchElevate.whenPressed(new ElevateToSwitch("default"));
-		highSwitchElevate.whenPressed(new ElevateToSwitch("high"));
+		defaultSwitchElevate.whenPressed(new ElevateToSwitch());
 
-		// manualElevate.whenPressed(new ManualElevate());
+		manualElevate.whenPressed(new ManualElevate());
 		zeroElevator.whenPressed(new ZeroElevator());
 	}
 

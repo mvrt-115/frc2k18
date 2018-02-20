@@ -17,7 +17,8 @@ public class DriveTimedAutoLine extends TimedCommand {
 	}
 	
 	public void initialize() {
-		Robot.drivetrain.pidDriveStraight(heading);
+		Robot.drivetrain.pidDriveStraight(heading, speed);
+		Robot.drivetrain.driveStraightController.enable();
 	}
 	
 	private double turnOutput;
@@ -25,13 +26,15 @@ public class DriveTimedAutoLine extends TimedCommand {
 	public void execute() {
 		turnOutput = Robot.drivetrain.getDriveStraightOutput();
 		SmartDashboard.putNumber("DriveTimedAutoLine turnOutput", turnOutput);
-
-		Robot.drivetrain.setLeftRightMotorOutputs((speed + turnOutput), (speed - turnOutput));
+//
+//		Robot.drivetrain.pidWrite(speed );
+//		Robot.drivetrain.setLeftRightMotorOutputs((speed + turnOutput), (speed - turnOutput));
 	}
 
 	public void end() {
-		Robot.drivetrain.turnController.disable();
+		Robot.drivetrain.driveStraightController.disable();
 		Robot.drivetrain.stop();
+		Robot.drivetrain.resetPidState();
 	}
 	
 }

@@ -1,28 +1,25 @@
 package org.usfirst.frc.team115.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.auton.DriveTimedAutoLine;
+
+import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevateToSwitch extends Command {
 
-	private String configuration;
-
-	public ElevateToSwitch(String configuration) {
-		this.configuration = configuration;
+	public ElevateToSwitch() {
 		requires(Robot.elevator);
 	}
 
 	public void initialize() {
-//		if (configuration == "high")
-//			Robot.elevator.setElevatorSetpoint(Constants.kHighSwitchHeight);
-//		if (configuration == "default")
-			Robot.elevator.setElevatorSetpoint(Constants.kDefaultSwitchHeight);
+		Robot.elevator.setElevatorSetpoint(Constants.kDefaultSwitchHeight);
 	}
 
 	public void execute() {
 		if(Robot.elevator.getError() <= 455.0) {
 			Robot.elevator.hold();
+			Robot.carriage.outtakeCube(1.0);
 		} 
 	}
 

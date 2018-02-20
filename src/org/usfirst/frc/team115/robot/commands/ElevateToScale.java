@@ -25,6 +25,7 @@ public class ElevateToScale extends Command {
 	public void execute() {
 		if(Robot.elevator.getError() <= 455.0) {
 			Robot.elevator.hold();
+			Robot.carriage.outtakeCube(1.0);
 		}
 	}
 

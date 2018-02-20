@@ -15,11 +15,14 @@ public class CarriageCommand extends Command {
 	}
 
 	protected void execute() {
-		Robot.carriage.intakeCube(1); //values tbd
+		if (Robot.oi.intakePressed())
+			Robot.carriage.intakeCube(1); //values tbd
+		if (Robot.oi.outtakePressed())
+			Robot.carriage.outtakeCube(-1);
 	}
 
 	protected boolean isFinished() {
-		return !(Robot.oi.intakePressed());
+		return (!Robot.oi.intakePressed() || !Robot.oi.outtakePressed());
 	}
 
 	protected void end() {
