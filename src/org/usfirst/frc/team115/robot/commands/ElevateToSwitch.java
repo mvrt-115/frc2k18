@@ -6,22 +6,17 @@ import org.usfirst.frc.team115.robot.Robot;
 
 public class ElevateToSwitch extends Command {
 
-	private String configuration;
-
-	public ElevateToSwitch(String configuration) {
-		this.configuration = configuration;
+	public ElevateToSwitch() {
 		requires(Robot.elevator);
 	}
 
 	public void initialize() {
-//		if (configuration == "high")
-//			Robot.elevator.setElevatorSetpoint(Constants.kHighSwitchHeight);
-//		if (configuration == "default")
-			Robot.elevator.setElevatorSetpoint(Constants.kDefaultSwitchHeight);
+		Robot.intake.extendIntake();
+		Robot.elevator.setElevatorSetpoint(Constants.kDefaultSwitchHeight);
 	}
 
 	public void execute() {
-		if(Robot.elevator.getError() <= 455.0) {
+		if(Robot.elevator.getError() <= Robot.elevator.convertInchesToTicks(1.0)) {
 			Robot.elevator.hold();
 		} 
 	}

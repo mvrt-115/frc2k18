@@ -15,7 +15,7 @@ public class CarriageCommand extends Command {
 	}
 
 	protected void execute() {
-		Robot.carriage.intakeCube(1); //values tbd
+		Robot.carriage.intakeCube(0.25); //values tbd
 	}
 
 	protected boolean isFinished() {

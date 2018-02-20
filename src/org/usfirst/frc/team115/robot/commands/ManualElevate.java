@@ -1,5 +1,6 @@
 package org.usfirst.frc.team115.robot.commands;
 
+import org.usfirst.frc.team115.robot.Hardware;
 import org.usfirst.frc.team115.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -9,11 +10,16 @@ public class ManualElevate extends Command{
 	public ManualElevate() {
 		requires(Robot.elevator);
 	}
-	
+
+	protected void initialize() {
+		Robot.intake.extendIntake();		
+	}
+
 	public void execute() {
 		// if(Robot.oi.manualElevatePressed())
 		Robot.elevator.manualElevate(Robot.oi.getManualElevate());
-		
+		//		}
+
 	}
 
 	protected boolean isFinished() {
@@ -22,7 +28,7 @@ public class ManualElevate extends Command{
 	}
 
 	public void end() {
-//		Robot.elevator.zero();
+		//		Robot.elevator.zero();
 	}
 
 }

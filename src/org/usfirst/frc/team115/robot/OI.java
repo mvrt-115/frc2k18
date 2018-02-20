@@ -1,13 +1,12 @@
 package org.usfirst.frc.team115.robot;
 
-import org.usfirst.frc.team115.robot.Constants;
-
-import org.usfirst.frc.team115.robot.commands.IntakeCommand;
-import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
-import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
 import org.usfirst.frc.team115.robot.commands.ElevateToScale;
-import org.usfirst.frc.team115.robot.commands.ZeroElevator;
+import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
+import org.usfirst.frc.team115.robot.commands.IntakeCommand;
 import org.usfirst.frc.team115.robot.commands.ManualElevate;
+import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
+import org.usfirst.frc.team115.robot.commands.WideIntakeCommand;
+import org.usfirst.frc.team115.robot.commands.ZeroElevator;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -23,6 +22,7 @@ public class OI {
 	JoystickButton intake;
 	JoystickButton outtake;
 	JoystickButton carriage;
+	JoystickButton wideIntake;
 	
 	Joystick operatorPanel;
 	JoystickButton defaultSwitchElevate;
@@ -32,42 +32,47 @@ public class OI {
 	JoystickButton highScaleElevate;
 	
 	JoystickButton manualElevate;
+	JoystickButton manualMode;
 	JoystickButton zeroElevator;
 
 	public OI() {
 		driverJoystick = new Joystick(0);
 		intake = new JoystickButton(driverJoystick, Constants.kIntake);	
-		outtake = new JoystickButton(driverJoystick, Constants.kOuttake); 
+		wideIntake = new JoystickButton(driverJoystick, 4);
 		
 		operatorPanel = new Joystick(1);
 		
-		defaultSwitchElevate = new JoystickButton(operatorPanel, 3);
-		highSwitchElevate = new JoystickButton(operatorPanel, 4);
+		outtake = new JoystickButton(operatorPanel, Constants.kOuttake); 
 		
-		lowScaleElevate = new JoystickButton(operatorPanel, 8);
-		defaultScaleElevate = new JoystickButton(operatorPanel, 6);
+		defaultSwitchElevate = new JoystickButton(operatorPanel, Constants.kSwitch);
+		
+		lowScaleElevate = new JoystickButton(operatorPanel, 11);
+		defaultScaleElevate = new JoystickButton(operatorPanel, 9);
 		highScaleElevate = new JoystickButton(operatorPanel, 7);
 		
-		manualElevate = new JoystickButton(operatorPanel, 5);
-		zeroElevator = new JoystickButton(operatorPanel, 9);
+		zeroElevator = new JoystickButton(operatorPanel, Constants.kZero);
+		manualMode = new JoystickButton(operatorPanel, Constants.kManualMode);
 		
 		intake.whenPressed(new IntakeCommand());
+		wideIntake.whenPressed(new WideIntakeCommand());
 		outtake.whenPressed(new OuttakeCommand());
 		
 		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
 		highScaleElevate.whenPressed(new ElevateToScale("high"));
 		lowScaleElevate.whenPressed(new ElevateToScale("low"));
 		
-		defaultSwitchElevate.whenPressed(new ElevateToSwitch("default"));
-		highSwitchElevate.whenPressed(new ElevateToSwitch("high"));
+		defaultSwitchElevate.whenPressed(new ElevateToSwitch());
 
-		// manualElevate.whenPressed(new ManualElevate());
 		zeroElevator.whenPressed(new ZeroElevator());
+		manualMode.whenPressed(new ManualElevate());
 	}
 
+	public boolean getManualMode() {
+		return manualMode.get();
+	}
+	
 	public double getManualElevate() {
 		return operatorPanel.getRawAxis(Constants.kManualElevate);
-//		return operatorPanel.getY();
 	} 
 	
 	public double getThrottle() {
@@ -83,11 +88,15 @@ public class OI {
 	}
 	
 	public boolean getHoldPosition() {
-		return operatorPanel.getRawButton(1);
+		return operatorPanel.getRawButton(2);
 	}
 	
 	public boolean intakePressed() {
 		return intake.get();
+	}
+	
+	public boolean wideIntake() {
+		return wideIntake.get();
 	}
 	
 	public boolean outtakePressed() {
@@ -100,5 +109,19 @@ public class OI {
 
 	public boolean getElevateToSwitch() {
 		return defaultSwitchElevate.get();
+	}
+
+	public double getLeftIntake() {
+		// TODO Auto-generated method stub
+		return this.driverJoystick.getRawAxis(2);
+	}
+	
+	public double getRightIntake() {
+		// TODO Auto-generated method stub
+		return this.driverJoystick.getRawAxis(3);
+	}
+	
+	public boolean getShiftButton() {
+		return driverJoystick.getRawButton(2);
 	}
 }

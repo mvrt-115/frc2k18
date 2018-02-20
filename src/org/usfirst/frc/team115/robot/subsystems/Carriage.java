@@ -1,38 +1,47 @@
 package org.usfirst.frc.team115.robot.subsystems;
 
-import org.usfirst.frc.team115.robot.commands.CarriageCommand;
+import org.usfirst.frc.team115.robot.Constants;
+import org.usfirst.frc.team115.robot.Hardware;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Carriage extends Subsystem {
 	
-	private TalonSRX left, right;
-	
 	public Carriage()  {
-		left = new TalonSRX(41);	
-		right = new TalonSRX(1);
-		
-		right.set(ControlMode.Follower, left.getDeviceID());
-		right.setInverted(true);
+		Hardware.carriageLeft = new TalonSRX(Constants.kCarriageLeftTalonID);	
+		Hardware.carriageRight = new TalonSRX(Constants.kCarriageRightTalonID);
+		Hardware.carriageRight.set(ControlMode.Follower, Hardware.carriageLeft.getDeviceID());
+		Hardware.carriageRight.setInverted(true);
+		Hardware.carriageBreakbeam = new DigitalInput(2);
 	}
 	
 	public void intakeCube (double motorSpeed) {
-		left.set(ControlMode.PercentOutput, motorSpeed);
+		Hardware.carriageLeft.set(ControlMode.PercentOutput, motorSpeed);
 	}
 	
 	public void outtakeCube (double motorSpeed) { //motorSpeed should be negative
-		left.set(ControlMode.PercentOutput, (motorSpeed > 0 ? -1.0 : 1.0) * motorSpeed);
+		Hardware.carriageLeft.set(ControlMode.PercentOutput, motorSpeed);
 	}
 	
 	public void stop()  {
-		left.set(ControlMode.PercentOutput, 0);
+		Hardware.carriageLeft.set(ControlMode.PercentOutput, 0.0);
+	}
+
+	public boolean cubeDetected() {
+		return !(Hardware.carriageBreakbeam.get()); 
+	}
+	
+	public void log() {
+		SmartDashboard.putBoolean("Carriage Breakbeam", cubeDetected());
 	}
 	
 	protected void initDefaultCommand() {
-		setDefaultCommand(new CarriageCommand());
+//		setDefaultCommand(new CarriageCommand());
 	}
 
 }

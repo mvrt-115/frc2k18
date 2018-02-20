@@ -14,6 +14,7 @@ public class ElevateToScale extends Command {
 	}
 
 	public void initialize() {
+		Robot.intake.extendIntake();
 		if (configuration == "high")
 			Robot.elevator.setElevatorSetpoint(Constants.kHighScaleHeight); //placing from higher than regular height (eg cubes already stacked on first layer)
 		else if (configuration == "default")
@@ -23,7 +24,7 @@ public class ElevateToScale extends Command {
 	}
 	
 	public void execute() {
-		if(Robot.elevator.getError() <= 455.0) {
+		if(Robot.elevator.getError() <= Robot.elevator.convertInchesToTicks(1.0)) {
 			Robot.elevator.hold();
 		}
 	}

@@ -57,7 +57,7 @@ public class DriveSwitch extends CommandGroup {
 				addSequential(new PidTurn(90));
 			}
 		}
-		addSequential(new ElevateToSwitch("default")); //Regular height
+		addSequential(new ElevateToSwitch()); //Regular height
 		addSequential(new OuttakeCommand());
 	}
 }

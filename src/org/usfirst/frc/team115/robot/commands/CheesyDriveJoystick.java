@@ -11,7 +11,10 @@ public class CheesyDriveJoystick extends Command {
 	}
 	
 	public void execute() {
-		Robot.drivetrain.drive(Robot.oi.getThrottle(), -Robot.oi.getWheel(), Robot.oi.getQuickTurn());
+		if(Robot.oi.getShiftButton()) {
+			Robot.drivetrain.shift();
+		}
+		Robot.drivetrain.drive(Robot.oi.getThrottle() * 0.90, -Robot.oi.getWheel() * 0.90, Robot.oi.getQuickTurn());
 	}
 
 	@Override

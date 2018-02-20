@@ -1,5 +1,7 @@
 package org.usfirst.frc.team115.robot;
 
+//import org.usfirst.frc.team115.robot.Hardware;
+
 import org.usfirst.frc.team115.robot.auton.DriveAutoLine;
 import org.usfirst.frc.team115.robot.auton.DriveScale;
 import org.usfirst.frc.team115.robot.auton.DriveSwitch;
@@ -8,6 +10,9 @@ import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
 import org.usfirst.frc.team115.robot.subsystems.Intake;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -36,10 +41,12 @@ public class Robot extends IterativeRobot {
 	public static char gameSwitchConfig;
 	public static char gameScaleConfig;
 	
-//	DigitalInput limitSwitch;
+//	DigitalInput limitSwitch
+//	AnalogInput hallEffect;
 
 	Command autonomousCommand;
 	SendableChooser<Command> chooser = new SendableChooser<>();
+	
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -53,7 +60,6 @@ public class Robot extends IterativeRobot {
 		carriage = new Carriage();
 		elevator = new Elevator();
 		oi = new OI();
-//		limitSwitch = new DigitalInput(0);
 
 		chooser.addDefault("Do Nothing", null);
 		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
@@ -61,6 +67,16 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("Drive Switch", new DriveSwitch());
 
 		SmartDashboard.putData("Auto mode", chooser);
+		
+		Compressor compressor = new Compressor(1);
+		compressor.setClosedLoopControl(true);
+		compressor.start();
+		
+//		UsbCamera driveCam = new UsbCamera("cam0", 0);
+//		UsbCamera intakeCam = new UsbCamera("cam1", 1);
+		
+//		CameraServer.getInstance().addCamera(driveCam);
+		CameraServer.getInstance().startAutomaticCapture(0);
 	}
 
 	/**
@@ -91,6 +107,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		elevator.zero();
 		// autonomousCommand = chooser.getSelected();
 
 		/*
@@ -163,6 +180,8 @@ public class Robot extends IterativeRobot {
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 		
+		elevator.zero();
+		
 	}
 
 	/**
@@ -173,14 +192,18 @@ public class Robot extends IterativeRobot {
 		Scheduler.getInstance().run();
 //		SmartDashboard.putBoolean("Limit Switch Pressed", limitSwitch.get());
 		
-		SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
-		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());
-		SmartDashboard.putNumber("Right Vel", drivetrain.getRightVel());
-		SmartDashboard.putNumber("Left Vel", drivetrain.getLeftVel());
-		SmartDashboard.putNumber("Current Dist", drivetrain.getCurrentDist());
-		SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
+//		SmartDashboard.putNumber("Sensor Reading", a);
+//		SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
+//		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());
+//		SmartDashboard.putNumber("Right Vel", drivetrain.getRightVel());
+//		SmartDashboard.putNumber("Left Vel", drivetrain.getLeftVel());
+//		SmartDashboard.putNumber("Current Dist", drivetrain.getCurrentDist());
+//		SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
+//		SmartDashboard.putNumber("Sensor Reading", hallEffect.getAverageVoltage());
 		elevator.log();
-
+		drivetrain.log();
+		carriage.log();
+		SmartDashboard.putBoolean("Cube Detected?", carriage.cubeDetected());
 		
 	}
 
