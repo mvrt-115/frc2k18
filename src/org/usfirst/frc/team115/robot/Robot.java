@@ -1,7 +1,7 @@
 package org.usfirst.frc.team115.robot;
 
 
-import org.usfirst.frc.team115.robot.auton.DriveScale;
+import org.usfirst.frc.team115.robot.auton.DriveSwitch;
 import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
@@ -151,7 +151,7 @@ public class Robot extends IterativeRobot {
 		//		new DriveTimedAutoLine(1, 0.0).start();
 		//		(new DriveAutoLine()).start();
 //		(new DriveSwitch("left", "A")).start();
-				(new DriveScale("left", "A")).start();
+				(new DriveSwitch("left", "B")).start();
 		//		(new TimedSwitch("left", "A")).start();
 		//		(new TimedScale("right", "A")).start();
 

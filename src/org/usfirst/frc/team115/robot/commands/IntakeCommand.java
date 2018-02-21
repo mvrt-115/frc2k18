@@ -26,11 +26,11 @@ public class IntakeCommand extends Command {
 	}
 
 	protected void end() {
-		//		if(Robot.carriage.cubeDetected()) {
-		//			Robot.intake.stallIntake();
-		//		} else {
-		Robot.intake.stop();
-		//		}
+		if(Robot.carriage.cubeDetected()) {
+			Robot.intake.stallIntake();
+		} else {
+			Robot.intake.stop();
+		}
 	}
 
 	protected void interrupted() {
