@@ -3,8 +3,10 @@ package org.usfirst.frc.team115.robot;
 import org.usfirst.frc.team115.robot.commands.ElevateToScale;
 import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
 import org.usfirst.frc.team115.robot.commands.IntakeCommand;
+import org.usfirst.frc.team115.robot.commands.ManualElevate;
 import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 import org.usfirst.frc.team115.robot.commands.WideIntakeCommand;
+import org.usfirst.frc.team115.robot.commands.ZeroElevator;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -38,27 +40,36 @@ public class OI {
 		wideIntake = new JoystickButton(driverJoystick, 4);
 		
 		operatorPanel = new Joystick(1);
-		outtake = new JoystickButton(operatorPanel, Constants.kOuttake); 
-
+		outtake = new JoystickButton(operatorPanel, Constants.kOuttake) { 
+			public boolean get() {
+				return operatorPanel.getRawAxis(Constants.kOuttake) >= 0.3;
+			}
+		};
 		
 		defaultSwitchElevate = new JoystickButton(operatorPanel, Constants.kSwitch);
 		
-		lowScaleElevate = new JoystickButton(operatorPanel, 11);
-		defaultScaleElevate = new JoystickButton(operatorPanel, 9);
-		highScaleElevate = new JoystickButton(operatorPanel, 7);
+		lowScaleElevate = new JoystickButton(operatorPanel, 1);
+		defaultScaleElevate = new JoystickButton(operatorPanel, 3);
+		highScaleElevate = new JoystickButton(operatorPanel, 4);
 		
-		zeroElevator = new JoystickButton(operatorPanel, Constants.kZero);
+		zeroElevator = new JoystickButton(operatorPanel, Constants.kZero) {
+			public boolean get() {
+				return operatorPanel.getRawAxis(Constants.kZero) >= 0.3;
+			}
+		};
 		manualMode = new JoystickButton(operatorPanel, Constants.kManualMode);
 		
 		intake.whenPressed(new IntakeCommand());
 		wideIntake.whenPressed(new WideIntakeCommand());
 		outtake.whenPressed(new OuttakeCommand());
 		
-		defaultScaleElevate.whenPressed(new ElevateToScale("default"));
-		highScaleElevate.whenPressed(new ElevateToScale("high"));
-		lowScaleElevate.whenPressed(new ElevateToScale("low"));
+		defaultScaleElevate.whenPressed(new ElevateToScale("default", false));
+		highScaleElevate.whenPressed(new ElevateToScale("high", false));
+		lowScaleElevate.whenPressed(new ElevateToScale("low", false));
 		
-		defaultSwitchElevate.whenPressed(new ElevateToSwitch());
+		defaultSwitchElevate.whenPressed(new ElevateToSwitch(false));
+		manualMode.whenPressed(new ManualElevate());
+		zeroElevator.whenPressed(new ZeroElevator());
 	}
 
 	public boolean getManualMode() {
@@ -82,7 +93,7 @@ public class OI {
 	}
 	
 	public boolean getHoldPosition() {
-		return operatorPanel.getRawButton(2);
+		return operatorPanel.getRawAxis(2) >= 0.3;
 	}
 	
 	public boolean intakePressed() {
@@ -106,12 +117,10 @@ public class OI {
 	}
 
 	public double getLeftIntake() {
-		// TODO Auto-generated method stub
 		return this.driverJoystick.getRawAxis(2);
 	}
 	
 	public double getRightIntake() {
-		// TODO Auto-generated method stub
 		return this.driverJoystick.getRawAxis(3);
 	}
 	

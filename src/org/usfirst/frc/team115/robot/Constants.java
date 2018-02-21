@@ -55,13 +55,13 @@ public class Constants {
 	public static int kQuickTurn = 5;
 	
 	public static int kManualElevate = 1;
-	public static int kManualMode = 3;
-	public static int kZero = 4;
+	public static int kManualMode = 5;
+	public static int kZero = 5;
 	
 	public static int kIntake = 6;
-	public static int kOuttake = 1;
+	public static int kOuttake = 3;
 
-	public static int kSwitch = 12;
+	public static int kSwitch = 2;
 	
 	public static int kPIDLoopIdx = 0;
 	public static int kTimeoutMs = 0;

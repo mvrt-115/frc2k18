@@ -8,8 +8,11 @@ import edu.wpi.first.wpilibj.command.Command;
 
 public class ElevateToSwitch extends Command {
 
-	public ElevateToSwitch() {
+	boolean isAuton;
+	
+	public ElevateToSwitch(boolean isAuton) {
 		requires(Robot.elevator);
+		this.isAuton = isAuton;
 	}
 
 	public void initialize() {
@@ -20,6 +23,9 @@ public class ElevateToSwitch extends Command {
 	public void execute() {
 		if(Robot.elevator.getError() <= Robot.elevator.convertInchesToTicks(1.0)) {
 			Robot.elevator.hold();
+			if(isAuton) {
+				Robot.intake.outtakeCube();
+			}
 		} 
 	}
 
@@ -29,5 +35,9 @@ public class ElevateToSwitch extends Command {
 	}
 
 	public void end() {
+		Robot.elevator.zero();
+		if(isAuton) {
+			Robot.intake.stop();
+		}
 	}
 }

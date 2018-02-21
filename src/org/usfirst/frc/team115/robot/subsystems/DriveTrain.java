@@ -357,6 +357,7 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 
 	@Override
 	public void pidWrite(double output) {
+		output = -output;
 		if (state == PidState.TURN) {
 			if (output >= 0.0)
 				output = Math.max(nominalTurnOutput, output);
@@ -365,14 +366,14 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 			setLeftRightMotorOutputs(output, -output);
 		}
 		else if (state == PidState.DRIVESTRAIGHT) {
-			setLeftRightMotorOutputs(defaultSpeed + output, defaultSpeed - output);
+			setLeftRightMotorOutputs(-defaultSpeed + output, -defaultSpeed - output);
 		}
 		else if (state == PidState.DISTANCE) {
 			if (output >= 0.0)
 				output = Math.max(nominalDriveOutput, output);
 			else
 				output = Math.min(-nominalDriveOutput, output);
-			turnSpeed = driveStraightOutput.getOutput();
+			turnSpeed = -driveStraightOutput.getOutput();
 			SmartDashboard.putNumber("TurnSpeed", turnSpeed);
 			SmartDashboard.putNumber("Motor output", output);
 			setLeftRightMotorOutputs(output + turnSpeed, output - turnSpeed);

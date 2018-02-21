@@ -19,7 +19,7 @@ public class DriveScale extends CommandGroup {
 		if(profileName == "left" && startingPos == "A") {
 			addSequential(new DriveForDistance(285.0/12.0, 0.0));
 			addSequential(new PidTurn(60));
-			addSequential(new ElevateToScale("default"));
+			addSequential(new ElevateToScale("high", true), 2);
 		}
 	}
 }

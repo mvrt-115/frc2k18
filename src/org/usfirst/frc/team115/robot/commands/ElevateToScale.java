@@ -7,9 +7,11 @@ import org.usfirst.frc.team115.robot.Robot;
 public class ElevateToScale extends Command {
 
 	private String configuration;
+	boolean isAuton;
 
-	public ElevateToScale(String configuration) {
+	public ElevateToScale(String configuration, boolean isAuton) {
 		this.configuration = configuration;
+		this.isAuton = isAuton;
 		requires(Robot.elevator);
 	}
 
@@ -26,7 +28,9 @@ public class ElevateToScale extends Command {
 	public void execute() {
 		if(Robot.elevator.getError() <= Robot.elevator.convertInchesToTicks(1.0)) {
 			Robot.elevator.hold();
-			Robot.carriage.outtakeCube(1.0);
+			if(isAuton) {
+				Robot.intake.outtakeCube();
+			}
 		}
 	}
 
@@ -36,7 +40,10 @@ public class ElevateToScale extends Command {
 	}
 
 	public void end() {
-		
+		Robot.elevator.zero();
+		if(isAuton) {
+			Robot.intake.stop();
+		}
 	}
 
 }

@@ -9,7 +9,6 @@ import org.usfirst.frc.team115.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -27,7 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends IterativeRobot {
 
-	DigitalInput BreakBeam = new DigitalInput(0);
 	public static OI oi;
 	public static DriveTrain drivetrain;
 	public static Intake intake;
@@ -47,17 +45,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-
-
 		drivetrain = new DriveTrain();
 		intake = new Intake();
 		carriage = new Carriage();
 		elevator = new Elevator();
 		oi = new OI();
-
-		//		breakBeam = new DigitalInput(0);
-
-		//		limitSwitch = new Digita  lInput(0);
 
 		// chooser.addDefault("Do Nothing", null);
 		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
@@ -70,10 +62,6 @@ public class Robot extends IterativeRobot {
 		compressor.setClosedLoopControl(true);
 		compressor.start();
 
-		//		UsbCamera driveCam = new UsbCamera("cam0", 0);
-		//		UsbCamera intakeCam = new UsbCamera("cam1", 1);
-
-		//		CameraServer.getInstance().addCamera(driveCam);
 		CameraServer.getInstance().startAutomaticCapture(0);
 	}
 
@@ -112,7 +100,7 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		elevator.zero();
 		// autonomousCommand = chooser.getSelected();
-		drivetrain.zeroDrive();
+		drivetrain.zeroYaw();
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -162,8 +150,8 @@ public class Robot extends IterativeRobot {
 		//		}
 		//		new DriveTimedAutoLine(1, 0.0).start();
 		//		(new DriveAutoLine()).start();
-		(new DriveSwitch("left", "A")).start();
-		//				(new DriveScale("left", "A")).start();
+//		(new DriveSwitch("left", "A")).start();
+				(new DriveScale("left", "A")).start();
 		//		(new TimedSwitch("left", "A")).start();
 		//		(new TimedScale("right", "A")).start();
 
