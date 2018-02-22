@@ -49,8 +49,14 @@ public class Intake extends Subsystem {
 		Hardware.intakeStowRight.set(Value.kForward);
 	}
 
+	public void stallIntake() {
+		Hardware.intakeLeft.set(ControlMode.PercentOutput, 0);
+		Hardware.intakeRight.set(ControlMode.PercentOutput, 0);
+		Robot.carriage.intakeCube(1.0/12.0);
+	}
+
 	public void intakeCube (boolean wide) {
-		//		intakeDown();
+		//	intakeDown();
 		if(wide) {
 			extendIntake();
 		} else {
@@ -62,30 +68,23 @@ public class Intake extends Subsystem {
 	}
 
 	public void outtakeCube () {
-		//if (intake.get() != Value.kReverse) //check if already extended
-		//extendIntake();
-		//		extendIntake();
+		// if (intake.get() != Value.kReverse) //check if already extended
+		// extendIntake();
 		Hardware.intakeLeft.set(ControlMode.PercentOutput, -0.65);
 		Hardware.intakeRight.set(ControlMode.PercentOutput, 0.65);
 		Robot.carriage.outtakeCube(-1);
 	}
 
-	public void stallIntake() {
-		Hardware.intakeLeft.set(ControlMode.PercentOutput, 0);
-		Hardware.intakeRight.set(ControlMode.PercentOutput, 0);
-		Robot.carriage.intakeCube(1.0/12.0);
-	}
-
 	public void stop()  {
 		Hardware.intakeLeft.set(ControlMode.PercentOutput, 0);
 		Hardware.intakeRight.set(ControlMode.PercentOutput, 0);
-//				stowIntake();
-		//		retractIntake();
+		//	stowIntake();
+		//	retractIntake();
 		Robot.carriage.stop();
 	}
 
 	public void initDefaultCommand()  {
-//		setDefaultCommand(new IntakeCommand());
+		//	setDefaultCommand(new IntakeCommand());
 	}
 
 }

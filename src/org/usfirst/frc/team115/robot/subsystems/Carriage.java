@@ -29,10 +29,6 @@ public class Carriage extends Subsystem {
 		Hardware.carriageLeft.set(ControlMode.PercentOutput, motorSpeed);
 	}
 	
-	public void stop()  {
-		Hardware.carriageLeft.set(ControlMode.PercentOutput, 0.0);
-	}
-
 	public boolean cubeDetected() {
 		return !(Hardware.carriageBreakbeam.get()); 
 	}
@@ -41,6 +37,9 @@ public class Carriage extends Subsystem {
 		SmartDashboard.putBoolean("Carriage Breakbeam", cubeDetected());
 	}
 	
+	public void stop()  {
+		Hardware.carriageLeft.set(ControlMode.PercentOutput, 0.0);
+	}
 	protected void initDefaultCommand() {
 //		setDefaultCommand(new CarriageCommand());
 	}

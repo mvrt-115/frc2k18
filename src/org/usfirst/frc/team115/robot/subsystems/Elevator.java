@@ -28,7 +28,7 @@ public class Elevator extends Subsystem {
 		Hardware.elevatorLeft.set(ControlMode.Follower, Hardware.elevatorRight.getDeviceID());
 		Hardware.elevatorRight.setInverted(true);
 		Hardware.elevatorLeft.setInverted(true);
-		//		Hardware.elevatorRight.setInverted(true);
+		//Hardware.elevatorRight.setInverted(true);
 
 		/* First choose the sensor. */
 		Hardware.elevatorRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
@@ -53,7 +53,7 @@ public class Elevator extends Subsystem {
 		Hardware.elevatorRight.config_kP(0, Constants.kElevatorP, Constants.kTimeoutMs);
 		Hardware.elevatorRight.config_kD(0, Constants.kElevatorD, Constants.kTimeoutMs);
 
-		Hardware.elevatorRight.configAllowableClosedloopError(Constants.kSlotIdx, (int)(convertInchesToTicks(1.1)), Constants.kTimeoutMs);
+		Hardware.elevatorRight.configAllowableClosedloopError(Constants.kSlotIdx, (int)(UnitConverter.convertInchesToTicks(1.1)), Constants.kTimeoutMs);
 
 		/* set acceleration and vcruise velocity - see documentation */
 		Hardware.elevatorRight.configMotionCruiseVelocity(15000, Constants.kTimeoutMs);
@@ -61,9 +61,11 @@ public class Elevator extends Subsystem {
 
 		/* zero the sensor */
 		Hardware.elevatorRight.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-		Hardware.elevatorRight.configForwardSoftLimitThreshold((int)(convertMetersToTicks(1.6)), 0);
+		Hardware.elevatorRight.configForwardSoftLimitThreshold((int)(UnitConverter.convertMetersToTicks(1.6)), 0);
 		Hardware.elevatorRight.configForwardSoftLimitEnable(true, 0);
 	}
+
+	/*** Elevator Movement Methods ***/
 
 	public double handleDeadband(double val, double deadband) {
 		return (Math.abs(val) > Math.abs(deadband)) ? val : 0.0;
@@ -82,37 +84,23 @@ public class Elevator extends Subsystem {
 		Hardware.elevatorRight.set(ControlMode.PercentOutput, throttle);
 	}
 
+	public void hold() {
+		Hardware.elevatorRight.set(ControlMode.PercentOutput, 1.0 / 12);
+	}
+
+	/*** PID Methods ***/
+
 	double setpoint = 0.0;
 	public void setElevatorSetpoint(double height) { //meters
-		setpoint = convertMetersToTicks(height);
+		setpoint = UnitConverter.convertMetersToTicks(height);
 		Hardware.elevatorRight.set(ControlMode.Position, setpoint);
 	}
 
 
+	/*** Get Methods ***/
+
 	public double getError() {
 		return Math.abs(Hardware.elevatorRight.getSelectedSensorPosition(0) - setpoint);
-	}
-
-	public double convertTicksToInches(double ticks) {
-		return (ticks/4096) * 2 * 0.75636 * Math.PI;
-	}
-
-	public double convertMetersToTicks(double goal) {
-		return ((goal / 0.0254) * (1 / (2 * 0.75636 * Math.PI)) * 4096); 
-	}
-
-	public double convertInchesToTicks(double inches) {
-		return (inches / (2 * 0.75636 * Math.PI) * 4096);
-	}
-
-	public void zero() {
-		//if zero hallEffect triggered, set encoder 
-		if (getBottomLimit()) {
-			stop();
-			Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
-		} else {
-			Hardware.elevatorRight.set(ControlMode.PercentOutput, 0.03);
-		}
 	}
 
 	public boolean getBottomLimit() {
@@ -123,9 +111,7 @@ public class Elevator extends Subsystem {
 		return !(Hardware.topHallEffect.get()); //false = magnet detected
 	}
 
-	public void hold() {
-		Hardware.elevatorRight.set(ControlMode.PercentOutput, 1.0 / 12);
-	}
+	/*** Zeroing and Logging ***/
 
 	public void stop() {
 		Hardware.elevatorRight.set(ControlMode.PercentOutput, 0);
@@ -135,13 +121,23 @@ public class Elevator extends Subsystem {
 		SmartDashboard.putNumber("Applied Current",  Hardware.elevatorRight.getOutputCurrent());
 		SmartDashboard.putNumber("Applied Voltage",  Hardware.elevatorRight.getMotorOutputVoltage());
 		SmartDashboard.putNumber("ClosedLoopError", Hardware.elevatorRight.getClosedLoopError(0));
-		SmartDashboard.putNumber("Current Elevator Position", convertTicksToInches(Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
+		SmartDashboard.putNumber("Current Elevator Position", UnitConverter.convertTicksToInches(Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
 		SmartDashboard.putNumber("Elevator Setpoint Ticks", setpoint);
-		SmartDashboard.putNumber("Elevator Error", convertTicksToInches(setpoint - Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
+		SmartDashboard.putNumber("Elevator Error", UnitConverter.convertTicksToInches(setpoint - Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
 		SmartDashboard.putBoolean("Bottom Hall Effect", getBottomLimit());
 		SmartDashboard.putBoolean("Top Hall Effect", getTopLimit());
 	}
 
+	public void zero() {
+		if (getBottomLimit()) {
+			stop();
+			Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
+		} else {
+			Hardware.elevatorRight.set(ControlMode.PercentOutput, 0.03);
+		}
+	}
+
+	/*** Other ***/
 	protected void initDefaultCommand() {
 	}
 }
