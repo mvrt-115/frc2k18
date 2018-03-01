@@ -1,7 +1,10 @@
 package org.usfirst.frc.team115.robot;
 
 
-import org.usfirst.frc.team115.robot.auton.DriveSwitch;
+import org.usfirst.frc.team115.robot.commands.auton.DriveAutoLine;
+import org.usfirst.frc.team115.robot.commands.auton.DriveScale;
+import org.usfirst.frc.team115.robot.commands.auton.DriveSwitch;
+import org.usfirst.frc.team115.robot.commands.auton.TwoCubeScaleSwitch;
 import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
@@ -9,6 +12,7 @@ import org.usfirst.frc.team115.robot.subsystems.Intake;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -57,7 +61,9 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("Drive Switch", new DriveSwitch());
 
 		SmartDashboard.putData("Auto mode", chooser);
-
+		SmartDashboard.putString("Auton Choice(2Cube, Switch, Scale, DriveLine):", "DriveLine");
+		SmartDashboard.getString("Starting Position(A, B, C):", "");
+		
 		Compressor compressor = new Compressor(1);
 		compressor.setClosedLoopControl(true);
 		compressor.start();
@@ -72,7 +78,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-
+		SmartDashboard.putString("Auton Choice(2Cube, Switch, Scale, DriveLine):", "DriveLine");
+		SmartDashboard.getString("Starting Position(A, B, C):", "");
 	}
 
 	@Override
@@ -108,56 +115,96 @@ public class Robot extends IterativeRobot {
 		 * autonomousCommand = new ExampleCommand(); break; }
 		 */
 
-		//Read game configuration via FMS and robot position via Driverstation
-		//https://wpilib.screenstepslive.com/s/currentCS/m/getting_started/l/826278-2018-game-data-details
-		//		String gameData = DriverStation.getInstance().getGameSpecificMessage();
-		//		String robotStartingPos = "";
-		//		SmartDashboard.getString("Starting Position: ", robotStartingPos); //A, B, C
-		//
-		//		int scalePriority, switchPriority, driveLinePriority;
-		//		String tmp = "";
-		//		SmartDashboard.getString("Scale Priority Value (1-3): ", tmp);
-		//		scalePriority = Integer.parseInt(tmp);
-		//		SmartDashboard.getString("Switch Priority Value (1-3): ", tmp);
-		//		switchPriority = Integer.parseInt(tmp);
-		//		SmartDashboard.getString("DriveLine Priority Value (1-3): ", tmp);
-		//		driveLinePriority = Integer.parseInt(tmp);
-		//		
-		//		gameRobotStartingConfig = robotStartingPos.charAt(0); //A,B,C from left to right
-		//		gameSwitchConfig = gameData.charAt(0); //L,R from driver view
-		//		gameScaleConfig = gameData.charAt(1); //L,R from driver view
-		//
-		//		if (driveLinePriority == 1) {
-		//			(new DriveAutoLine()).start();
-		//		}
-		//		else {
-		//			if (scalePriority == 1) {
-		//				//check if Scale is too far
-		//				if ((gameRobotStartingConfig == 'A' && gameScaleConfig == 'R') || 
-		//					(gameRobotStartingConfig == 'C' && gameScaleConfig == 'L')) {
-		//					if (driveLinePriority == 2)
-		//						(new DriveAutoLine()).start();
-		//					else if (switchPriority == 2) {
-		//						(new DriveSwitch()).start();
-		//					}
-		//				}
-		//				else
-		//					(new DriveScale()).start();
-		//			}
-		//			else if (switchPriority == 1) {
-		//				(new DriveSwitch()).start();
-		//			}
-		//		}
-		//		new DriveTimedAutoLine(1, 0.0).start();
-		//		(new DriveAutoLine()).start();
-//		(new DriveSwitch("left", "A")).start();
-				(new DriveSwitch("left", "B")).start();
-		//		(new TimedSwitch("left", "A")).start();
-		//		(new TimedScale("right", "A")).start();
+		String gameData = DriverStation.getInstance().getGameSpecificMessage();
+		String robotStartingPos = "";
+		robotStartingPos = SmartDashboard.getString("Starting Position: ", ""); //A, B, C
 
-		// schedule the autonomous command (example)
-		// if (autonomousCommand != null)
-		//	autonomousCommand.start();
+		String autonChoice = "";
+		autonChoice = SmartDashboard.getString("Auton Choice: (2Cube, Switch, Scale, DriveLine)", "DriveLine");
+
+		gameRobotStartingConfig = robotStartingPos.charAt(0); //A,B,C from left to right
+		gameSwitchConfig = gameData.charAt(0); //L,R from driver view
+		gameScaleConfig = gameData.charAt(1); //L,R from driver view
+
+		switch (robotStartingPos) {
+		case "A":
+			if (autonChoice.equals("2Cube")) {
+				if (gameSwitchConfig == 'L') {
+					if (gameScaleConfig == 'L')
+						(new TwoCubeScaleSwitch("left", "A")).start();
+					else
+						(new DriveSwitch("left", "A")).start();
+				}
+				else if (gameScaleConfig == 'L')
+					(new DriveScale("left", "A")).start();
+				else
+					(new DriveAutoLine()).start();
+			}
+			else if (autonChoice.equals("Switch")) {
+				if (gameSwitchConfig == 'L')
+					(new DriveSwitch("left", "A")).start();
+				else if (gameScaleConfig == 'L') {
+					// (new DriveScale()).start();
+					(new DriveAutoLine()).start();
+				}
+				else
+					(new DriveAutoLine()).start();
+			}
+			else if (autonChoice.equals("Scale")) {
+				if (gameScaleConfig == 'L')
+					(new DriveScale("left", "A")).start();
+				else if (gameSwitchConfig == 'L')
+					(new DriveSwitch("left", "L")).start();
+				else
+					(new DriveAutoLine()).start();
+			}
+			else
+				(new DriveAutoLine()).start();
+			break;
+		case "B":
+			if(gameSwitchConfig == 'L')
+				(new DriveSwitch("left", "B")).start();
+			else if(gameSwitchConfig == 'R')
+				(new DriveSwitch("right", "B")).start();
+			break;
+		case "C":
+			if (autonChoice.equals("2Cube")) {
+				if (gameSwitchConfig == 'R') {
+					if (gameScaleConfig == 'R')
+						(new TwoCubeScaleSwitch("right", "C")).start();
+					else
+						(new DriveSwitch("right", "C")).start();
+				}
+				else if (gameScaleConfig == 'R')
+					(new DriveScale("right", "C")).start();
+				else
+					(new DriveAutoLine()).start();
+			}
+			else if (autonChoice.equals("Switch")) {
+				if (gameSwitchConfig == 'R')
+					(new DriveSwitch("right", "C")).start();
+				else if (gameScaleConfig == 'R') {
+					// (new DriveScale()).start();
+					(new DriveAutoLine()).start();
+				}
+				else
+					(new DriveAutoLine()).start();
+			}
+			else if (autonChoice.equals("Scale")) {
+				if (gameScaleConfig == 'R')
+					(new DriveScale("right", "C")).start();
+				else if (gameSwitchConfig == 'R')
+					(new DriveSwitch("right", "C")).start();
+				else
+					(new DriveAutoLine()).start();
+			}
+			else
+				(new DriveAutoLine()).start();
+			break;
+		default:
+			(new DriveAutoLine()).start(); 
+			break;
+		}
 	}
 
 	/**

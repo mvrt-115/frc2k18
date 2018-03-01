@@ -2,6 +2,7 @@ package org.usfirst.frc.team115.robot.commands;
 
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.UnitConverter;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -21,7 +22,7 @@ public class ElevateToSwitch extends Command {
 	}
 
 	public void execute() {
-		if(Robot.elevator.getError() <= Robot.elevator.convertInchesToTicks(1.0)) {
+		if(Robot.elevator.getError() <= UnitConverter.convertInchesToTicks(1.0)) {
 			Robot.elevator.hold();
 			if(isAuton) {
 				Robot.intake.outtakeCube();

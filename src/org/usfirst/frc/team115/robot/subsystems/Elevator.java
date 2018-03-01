@@ -3,12 +3,12 @@ package org.usfirst.frc.team115.robot.subsystems;
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Hardware;
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.UnitConverter;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
