@@ -23,6 +23,7 @@ public class DriveForDistance extends Command {
 		Robot.drivetrain.pidDriveStraight(heading, 0.0);
 		Robot.drivetrain.driveDistanceController.enable();
 		Robot.drivetrain.driveStraightController.enable();
+		System.out.println("Calling DriveForDistance with setpoint = " + setpoint + ", heading = " + heading);
 	}
 	
 	public void execute() {

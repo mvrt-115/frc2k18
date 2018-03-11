@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Intake extends Subsystem {
 
+	public double outtakeSpeed = -1.0;
+	
 	public Intake()  {
 		Hardware.intakeLeft = new TalonSRX(Constants.kIntakeLeftTalonID);
 		Hardware.intakeRight = new TalonSRX(Constants.kIntakeRightTalonID);
@@ -67,12 +69,18 @@ public class Intake extends Subsystem {
 		Robot.carriage.intakeCube(0.90);
 	}
 
+//	public void setOuttakeSpeed (double motorSpeed) {
+//		this.outtakeSpeed = motorSpeed;
+//	}
+	
+	
 	public void outtakeCube () {
 		// if (intake.get() != Value.kReverse) //check if already extended
 		// extendIntake();
 		Hardware.intakeLeft.set(ControlMode.PercentOutput, -0.65);
 		Hardware.intakeRight.set(ControlMode.PercentOutput, 0.65);
 		Robot.carriage.outtakeCube(-1);
+//		Robot.carriage.outtakeCube(outtakeSpeed);
 	}
 
 	public void stop()  {

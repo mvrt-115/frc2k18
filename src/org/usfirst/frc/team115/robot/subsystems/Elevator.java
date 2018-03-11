@@ -25,26 +25,30 @@ public class Elevator extends Subsystem {
 		Hardware.bottomHallEffect = new DigitalInput(0);
 		Hardware.topHallEffect = new DigitalInput(1);
 
-		Hardware.elevatorLeft.set(ControlMode.Follower, Hardware.elevatorRight.getDeviceID());
-		Hardware.elevatorRight.setInverted(true);
-		Hardware.elevatorLeft.setInverted(true);
+//		Hardware.elevatorLeft.set(ControlMode.Follower, Hardware.elevatorRight.getDeviceID());
+		Hardware.elevatorLeft.follow(Hardware.elevatorRight);
+		Hardware.elevatorRight.setInverted(false);
+//		Hardware.elevatorLeft.setInverted(false);
 		//Hardware.elevatorRight.setInverted(true);
 
 		/* First choose the sensor. */
 		Hardware.elevatorRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
-		Hardware.elevatorRight.setSensorPhase(true);
+		Hardware.elevatorRight.setSensorPhase(false);
 
 		/* Set relevant frame periods to be at least as fast as periodic rate. */
 		Hardware.elevatorRight.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
+		Hardware.elevatorLeft.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, Constants.kTimeoutMs);
 
 
 		if (limitVoltage) {
-			Hardware.elevatorRight.configPeakOutputForward(0.3, Constants.kTimeoutMs);
-			Hardware.elevatorRight.configPeakOutputReverse(-0.3, Constants.kTimeoutMs);
+			Hardware.elevatorRight.configPeakOutputForward(0.4, Constants.kTimeoutMs);
+			Hardware.elevatorRight.configPeakOutputReverse(-0.4, Constants.kTimeoutMs);
+			Hardware.elevatorLeft.configPeakOutputForward(0.4, Constants.kTimeoutMs);
+			Hardware.elevatorLeft.configPeakOutputReverse(-0.4, Constants.kTimeoutMs);
 		}
 		else {
 			Hardware.elevatorRight.configPeakOutputForward(0.8, Constants.kTimeoutMs);
-			Hardware.elevatorRight.configPeakOutputReverse(-1.0, Constants.kTimeoutMs);
+			Hardware.elevatorRight.configPeakOutputReverse(-0.8, Constants.kTimeoutMs);
 		}
 
 		/* set closed loop gains in slot0 - see documentation */
@@ -94,6 +98,7 @@ public class Elevator extends Subsystem {
 	public void setElevatorSetpoint(double height) { //meters
 		setpoint = UnitConverter.convertMetersToTicks(height);
 		Hardware.elevatorRight.set(ControlMode.Position, setpoint);
+//		Hardware.elevatorRight.set(ControlMode.Position, setpoint);
 	}
 
 

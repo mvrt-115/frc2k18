@@ -20,16 +20,16 @@ public class PidTurn extends Command {
 		Robot.drivetrain.resetPidState();
 		Robot.drivetrain.setTurnSetpoint(setpoint);
 		Robot.drivetrain.turnController.enable();
+		System.out.println("Calling PIDTURN...");
 	}
 	
 	public void execute() {
+		System.out.println("TURNING...");
 	}
 
 	protected boolean isFinished() {
-		boolean ret = Math.abs(Robot.drivetrain.turnController.getError()) <= tolerance;
-		if (ret)
-			System.out.println("TURN ENDED EARLY");
-		return ret; //Math.abs(setpoint - Robot.drivetrain.getCurrentAngle()) <= tolerance;
+		//Math.abs(setpoint - Robot.drivetrain.getCurrentAngle()) <= tolerance;
+		return (Math.abs(Robot.drivetrain.turnController.getError()) <= tolerance);
 	}
 	
 	public void end() {

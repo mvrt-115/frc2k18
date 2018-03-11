@@ -22,12 +22,15 @@ public class ElevateToSwitch extends Command {
 	}
 
 	public void execute() {
+//		Robot.elevator.manualElevate(-0.3);
+//		if(Robot.elevator.getTopLimit()) {
 		if(Robot.elevator.getError() <= UnitConverter.convertInchesToTicks(1.0)) {
 			Robot.elevator.hold();
 			if(isAuton) {
+//				Robot.intake.setOuttakeSpeed(-0.5);
 				Robot.intake.outtakeCube();
 			}
-		} 
+		}
 	}
 
 	@Override
@@ -39,6 +42,7 @@ public class ElevateToSwitch extends Command {
 		Robot.elevator.zero();
 		if(isAuton) {
 			Robot.intake.stop();
+//			Robot.intake.setOuttakeSpeed(-1.0);
 		}
 	}
 }

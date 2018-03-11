@@ -16,7 +16,6 @@ public class Constants {
 	public static double kDriveFrontLeftF = 1023 * 0.7576 / 3488.0;
 	public static double kDriveFrontRightF = 1023 * 0.8591 / 5098.0;
 	
-	
 	public static double kElevatorP = 2.4;
 	public static double kElevatorI = 0.000;
 	public static double kElevatorD = 1;
@@ -24,9 +23,9 @@ public class Constants {
 	
 	public static int kIntakeLeftTalonID = 41;
 	public static int kIntakeRightTalonID = 13;
-	public static int kElevatorLeftTalonID = 9;
-	public static int kElevatorRightTalonID = 3; 
-	public static int kCarriageLeftTalonID = 42;
+	public static int kElevatorLeftTalonID = 3; //53;//9;
+	public static int kElevatorRightTalonID = 53; //3; 
+	public static int kCarriageLeftTalonID = 59;//42;
 	public static int kCarriageRightTalonID = 6;
 	public static int kDriveFrontLeftTalonID = 2;
 	public static int kDriveFrontRightTalonID = 17;
@@ -40,7 +39,6 @@ public class Constants {
 	public static double kTurnP = 1.0 / 96.50; //1.0 / 95.0; //old: 0.5 * 1.0 / 90.0;
 	public static double kTurnI = 0.0;
 	public static double kTurnD = 1 / (8.0 * 2.05); //1 / (8.0 * 3.4); //old: 1 / (8.0 * 3.2);
-
 
 	public static final int kTopLeftPin = 0;
 	public static final int kTopRightPin = 1;
@@ -67,10 +65,26 @@ public class Constants {
 	public static int kTimeoutMs = 0;
 	public static int kSlotIdx = 0;
 
-	public static double offset = 0.127;
-	public static double kLowScaleHeight = 0.81;
-	public static double kDefaultScaleHeight = 0.97;
-	public static double kHighScaleHeight = 1.15;
-
-	public static double kDefaultSwitchHeight = 0.35;
+//	/*** Scale Height Values (converted to feet) ***/
+//	public static double kLowScaleHeight = 2.567;
+//	public static double kDefaultScaleHeight = 3.182;
+//	public static double kHighScaleHeight = 1.15;
+//	public static double kDefaultSwitchHeight = 0.35;
+	
+//	/*** Deprecated Scale Height Values (in meters) ***/
+	 public static double offset = 0.127;
+	 public static double kLowScaleHeight = 0.81;
+	 public static double kDefaultScaleHeight = 0.97;
+	 public static double kHighScaleHeight = 1.15;
+	 public static double kDefaultSwitchHeight = 0.355;
+	
+	/*** Auton Path Values (feet) ***/
+	public static String autonChoiceString = "Auton Choice(2Cube, Switch, Scale, DriveLine):";
+	public static double distanceFromWallToSwitch = 168.0/12.0;
+	public static double distanceFromWallToScale = 294.0/12.0;
+	public static double distanceFromWallToAlley = 236.0/12.0;
+	public static double distanceFromAlleyToSwitch = 68.0/12.0;
+	public static double alleyDistanceToSwitch = 236.0/12.0;
+	public static double alleyDistanceToScale = 236.0/12.0;
+	
 }

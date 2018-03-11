@@ -61,13 +61,14 @@ public class Robot extends IterativeRobot {
 		// chooser.addObject("Drive Switch", new DriveSwitch());
 
 		SmartDashboard.putData("Auto mode", chooser);
-		SmartDashboard.putString("Auton Choice(2Cube, Switch, Scale, DriveLine):", "DriveLine");
-		SmartDashboard.getString("Starting Position(A, B, C):", "");
+		SmartDashboard.putString(Constants.autonChoiceString, "DriveLine");
+		SmartDashboard.putString("Starting Position(A, B, C):", "N");
 		
 		Compressor compressor = new Compressor(1);
 		compressor.setClosedLoopControl(true);
 		compressor.start();
 
+		
 		CameraServer.getInstance().startAutomaticCapture(0);
 	}
 
@@ -78,18 +79,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void disabledInit() {
-		SmartDashboard.putString("Auton Choice(2Cube, Switch, Scale, DriveLine):", "DriveLine");
-		SmartDashboard.getString("Starting Position(A, B, C):", "");
+		SmartDashboard.putString(Constants.autonChoiceString, "DriveLine");
+		SmartDashboard.putString("Starting Position(A, B, C):", "N");
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
-		SmartDashboard.putNumber("navX output", Robot.drivetrain.getYaw());
-		SmartDashboard.putNumber("DistTicks", drivetrain.getCurrentDist());
-		SmartDashboard.putNumber("Distance", drivetrain.getCurrentDist());
-		SmartDashboard.putNumber("Distance Error", drivetrain.getError());
-		SmartDashboard.putNumber("DriveDistanceController value", drivetrain.driveDistanceController.get());
+		elevator.log();
+		drivetrain.log();
 	}
 
 	/**
@@ -107,7 +105,7 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		elevator.zero();
 		// autonomousCommand = chooser.getSelected();
-		drivetrain.zeroYaw();
+		drivetrain.zeroDrive();
 		/*
 		 * String autoSelected = SmartDashboard.getString("Auto Selector",
 		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
@@ -117,10 +115,11 @@ public class Robot extends IterativeRobot {
 
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		String robotStartingPos = "";
-		robotStartingPos = SmartDashboard.getString("Starting Position: ", ""); //A, B, C
+		robotStartingPos = SmartDashboard.getString("Starting Position(A, B, C):", "N"); //A, B, C
 
 		String autonChoice = "";
-		autonChoice = SmartDashboard.getString("Auton Choice: (2Cube, Switch, Scale, DriveLine)", "DriveLine");
+		autonChoice = SmartDashboard.getString(Constants.autonChoiceString, "DriveLine");
+		autonChoice = autonChoice.trim();
 
 		gameRobotStartingConfig = robotStartingPos.charAt(0); //A,B,C from left to right
 		gameSwitchConfig = gameData.charAt(0); //L,R from driver view
@@ -128,7 +127,7 @@ public class Robot extends IterativeRobot {
 
 		switch (robotStartingPos) {
 		case "A":
-			if (autonChoice.equals("2Cube")) {
+			if (autonChoice.equalsIgnoreCase("2Cube")) {
 				if (gameSwitchConfig == 'L') {
 					if (gameScaleConfig == 'L')
 						(new TwoCubeScaleSwitch("left", "A")).start();
@@ -140,7 +139,7 @@ public class Robot extends IterativeRobot {
 				else
 					(new DriveAutoLine()).start();
 			}
-			else if (autonChoice.equals("Switch")) {
+			else if (autonChoice.equalsIgnoreCase("Switch")) {
 				if (gameSwitchConfig == 'L')
 					(new DriveSwitch("left", "A")).start();
 				else if (gameScaleConfig == 'L') {
@@ -150,13 +149,11 @@ public class Robot extends IterativeRobot {
 				else
 					(new DriveAutoLine()).start();
 			}
-			else if (autonChoice.equals("Scale")) {
-				if (gameScaleConfig == 'L')
-					(new DriveScale("left", "A")).start();
-				else if (gameSwitchConfig == 'L')
-					(new DriveSwitch("left", "L")).start();
+			else if (autonChoice.equalsIgnoreCase("Scale")) {
+				if (gameScaleConfig == 'R')
+					(new DriveScale("right", "A")).start();
 				else
-					(new DriveAutoLine()).start();
+					(new DriveScale("left", "A")).start();
 			}
 			else
 				(new DriveAutoLine()).start();
@@ -168,7 +165,10 @@ public class Robot extends IterativeRobot {
 				(new DriveSwitch("right", "B")).start();
 			break;
 		case "C":
-			if (autonChoice.equals("2Cube")) {
+			System.out.println("Case C");
+			System.out.println("autonChoice: " + autonChoice);
+			System.out.println("Game switch config: " + gameSwitchConfig);
+			if (autonChoice.equalsIgnoreCase("2Cube")) {
 				if (gameSwitchConfig == 'R') {
 					if (gameScaleConfig == 'R')
 						(new TwoCubeScaleSwitch("right", "C")).start();
@@ -180,11 +180,14 @@ public class Robot extends IterativeRobot {
 				else
 					(new DriveAutoLine()).start();
 			}
-			else if (autonChoice.equals("Switch")) {
-				if (gameSwitchConfig == 'R')
+			else if (autonChoice.equalsIgnoreCase("Switch")) {
+				System.out.println("C switch");
+				if (gameSwitchConfig == 'R') {
+					System.out.println("Calling right, C switch");
 					(new DriveSwitch("right", "C")).start();
+				}
 				else if (gameScaleConfig == 'R') {
-					// (new DriveScale()).start();
+//					 (new DriveScale()).start();
 					(new DriveAutoLine()).start();
 				}
 				else
@@ -193,13 +196,13 @@ public class Robot extends IterativeRobot {
 			else if (autonChoice.equals("Scale")) {
 				if (gameScaleConfig == 'R')
 					(new DriveScale("right", "C")).start();
-				else if (gameSwitchConfig == 'R')
-					(new DriveSwitch("right", "C")).start();
 				else
-					(new DriveAutoLine()).start();
+					(new DriveScale("left", "C")).start();
 			}
-			else
+			else {
+				System.out.println("AUTO LINE SWITCH");
 				(new DriveAutoLine()).start();
+			}
 			break;
 		default:
 			(new DriveAutoLine()).start(); 

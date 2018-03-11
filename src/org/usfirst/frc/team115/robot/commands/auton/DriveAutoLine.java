@@ -1,5 +1,6 @@
 package org.usfirst.frc.team115.robot.commands.auton;
 
+import org.usfirst.frc.team115.robot.Robot;
 import org.usfirst.frc.team115.robot.commands.DriveForDistance;
 import org.usfirst.frc.team115.robot.commands.IntakeDown;
 import org.usfirst.frc.team115.robot.commands.LiftIntake;
@@ -11,6 +12,7 @@ public class DriveAutoLine extends CommandGroup {
 
 	// need "PidTurn", "DriveForDistance"
 	public DriveAutoLine() {
+		Robot.drivetrain.zeroDrive();
 		addSequential(new IntakeDown());
 		addSequential(new TimedCommand(0.3));
 		addSequential(new LiftIntake());

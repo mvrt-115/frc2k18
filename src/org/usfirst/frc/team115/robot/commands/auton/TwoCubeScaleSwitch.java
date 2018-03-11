@@ -1,5 +1,6 @@
 package org.usfirst.frc.team115.robot.commands.auton;
 
+import org.usfirst.frc.team115.robot.Robot;
 import org.usfirst.frc.team115.robot.commands.DriveForDistance;
 import org.usfirst.frc.team115.robot.commands.ElevateToScale;
 import org.usfirst.frc.team115.robot.commands.ElevateToSwitch;
@@ -18,6 +19,7 @@ public class TwoCubeScaleSwitch extends CommandGroup {
 	public String startingPos;
 	
 	public TwoCubeScaleSwitch(String profileName, String startingPos) {
+		Robot.drivetrain.zeroDrive();
 		this.profileName = profileName;
 		this.startingPos = startingPos;
 		

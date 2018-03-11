@@ -4,6 +4,7 @@ import java.util.function.DoubleFunction;
 
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Hardware;
+import org.usfirst.frc.team115.robot.Robot;
 import org.usfirst.frc.team115.robot.UnitConverter;
 import org.usfirst.frc.team115.robot.commands.CheesyDriveJoystick;
 
@@ -382,6 +383,7 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	/*** Zeroing and Logging ***/
 
 	public void log() {
+		SmartDashboard.putNumber("navX output", Robot.drivetrain.getYaw());
 		SmartDashboard.putNumber("Encoder L", Hardware.driveFrontLeft.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Encoder R", Hardware.driveFrontRight.getSelectedSensorPosition(0));
 		SmartDashboard.putNumber("Distance", getCurrentDist());
