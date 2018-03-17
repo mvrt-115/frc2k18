@@ -66,17 +66,21 @@ public class Constants {
 	public static int kSlotIdx = 0;
 
 //	/*** Scale Height Values (converted to feet) ***/
-//	public static double kLowScaleHeight = 2.567;
-//	public static double kDefaultScaleHeight = 3.182;
-//	public static double kHighScaleHeight = 1.15;
-//	public static double kDefaultSwitchHeight = 0.35;
+	public static double kMinElevatorHeight = 0.0;
+	 public static double kMaxElevatorHeight = 3.937;
+	public static double kLowScaleHeight = 2.657;
+	public static double kDefaultScaleHeight = 3.182;
+	public static double kHighScaleHeight = 3.773;
+	public static double kDefaultSwitchHeight = 1.148;
 	
 //	/*** Deprecated Scale Height Values (in meters) ***/
 	 public static double offset = 0.127;
-	 public static double kLowScaleHeight = 0.81;
-	 public static double kDefaultScaleHeight = 0.97;
-	 public static double kHighScaleHeight = 1.15;
-	 public static double kDefaultSwitchHeight = 0.355;
+//	 public static double kMinElevatorHeight = 0.0;
+//	 public static double kMaxElevatorHeight = 1.2;
+//	 public static double kLowScaleHeight = 0.81;
+//	 public static double kDefaultScaleHeight = 0.97;
+//	 public static double kHighScaleHeight = 1.15;
+//	 public static double kDefaultSwitchHeight = 0.355;
 	
 	/*** Auton Path Values (feet) ***/
 	public static String autonChoiceString = "Auton Choice(2Cube, Switch, Scale, DriveLine):";

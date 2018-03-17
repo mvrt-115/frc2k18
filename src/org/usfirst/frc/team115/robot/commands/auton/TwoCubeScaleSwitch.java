@@ -28,24 +28,23 @@ public class TwoCubeScaleSwitch extends CommandGroup {
 //		addSequential(new LiftIntake());
 		
 		if(profileName == "left" && startingPos == "A") {
+			addSequential(new ElevateToScale("high", true), 3);
 			addSequential(new DriveForDistance(285.0/12.0, 0.0));
 			addSequential(new PidTurn(60));
-			addSequential(new TimedCommand(2.5));
-//			addSequential(new ElevateToScale("high", true), 20);
-//			addSequential(new OuttakeCommand());
+			addSequential(new OuttakeCommand());
+			addSequential(new ZeroElevator());
 			addSequential(new PidTurn(155));
-//			addSequential(new ZeroElevator());
 			addParallel(new IntakeCommand());
 			addSequential(new DriveTimedAutoLine(2.0, 155.0, 0.6));
 			addSequential(new ElevateToSwitch(true));
-//			addSequential(new OuttakeCommand(), 2);
+			addSequential(new OuttakeCommand(), 2);
 		} else if (profileName == "right" && startingPos == "C") {
+			addSequential(new ElevateToScale("high", true));
 			addSequential(new DriveForDistance(285.0/12.0, 0.0));
 			addSequential(new PidTurn(-60.0));
-			addSequential(new ElevateToScale("high", true));
 			addSequential(new OuttakeCommand());
-			addSequential(new PidTurn(-155));
 			addSequential(new ZeroElevator());
+			addSequential(new PidTurn(-155));
 			addParallel(new IntakeCommand());
 			addSequential(new DriveTimedAutoLine(4.0, -155.0, 0.6));
 			addParallel(new ElevateToSwitch(true));

@@ -9,6 +9,7 @@ import org.usfirst.frc.team115.robot.subsystems.Carriage;
 import org.usfirst.frc.team115.robot.subsystems.DriveTrain;
 import org.usfirst.frc.team115.robot.subsystems.Elevator;
 import org.usfirst.frc.team115.robot.subsystems.Intake;
+import org.usfirst.frc.team115.robot.subsystems.Elevator.ElevatorState;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -103,7 +104,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		elevator.zero();
+		elevator.enable(true);
+		elevator.updateState(ElevatorState.ZEROING);
 		// autonomousCommand = chooser.getSelected();
 		drivetrain.zeroDrive();
 		/*
@@ -235,7 +237,8 @@ public class Robot extends IterativeRobot {
 		// this line or comment it out.
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
-		elevator.zero();
+		elevator.enable(true);
+		elevator.updateState(ElevatorState.ZEROING);
 	}
 
 	/**
@@ -258,7 +261,6 @@ public class Robot extends IterativeRobot {
 		drivetrain.log();
 		carriage.log();
 		SmartDashboard.putBoolean("Cube Detected?", carriage.cubeDetected());
-
 		//		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
 		//		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
 

@@ -2,11 +2,10 @@ package org.usfirst.frc.team115.robot.commands;
 
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Robot;
-import org.usfirst.frc.team115.robot.UnitConverter;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class ElevateToScale extends Command {
+public class ElevateToScale extends InstantCommand {
 
 	private String configuration;
 	boolean isAuton;
@@ -25,27 +24,28 @@ public class ElevateToScale extends Command {
 			Robot.elevator.setElevatorSetpoint(Constants.kDefaultScaleHeight); //regular height
 		else if (configuration == "low")
 			Robot.elevator.setElevatorSetpoint(Constants.kLowScaleHeight); //placing at lower height (eg if scale in possession)
+		Robot.elevator.enable(true);
 	}
 	
 	public void execute() {
-		if(Robot.elevator.getError() <= UnitConverter.convertInchesToTicks(1.0)) {
-			Robot.elevator.hold();
-			if(isAuton) {
-				Robot.intake.outtakeCube();
-			}
-		}
+//		if(Robot.elevator.getError() <= UnitConverter.convertInchesToTicks(1.0)) {
+//			Robot.elevator.hold();
+//			if(isAuton) {
+//				Robot.intake.outtakeCube();
+//			}
+//		}
 	}
 
-	@Override
-	protected boolean isFinished() {
-		return false;
-	}
+//	@Override
+//	protected boolean isFinished() {
+//		return false;
+//	}
 
 	public void end() {
-		Robot.elevator.zero();
-		if(isAuton) {
-			Robot.intake.stop();
-		}
+//		Robot.elevator.zero();
+//		if(isAuton) {
+//			Robot.intake.stop();
+//		}
 	}
 
 }

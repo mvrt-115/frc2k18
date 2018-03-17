@@ -11,12 +11,28 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Elevator extends Subsystem {
 
+	public static final double kHoldVoltage = 1.0/12.0;
+
 	boolean limitVoltage = false;
+
+	public enum ElevatorState {
+		DISABLED,
+		ZEROING,
+		SETPOINT, 
+		HOLD,
+		MANUAL
+	};
+
+	public ElevatorState currState = ElevatorState.DISABLED;
+	public boolean enabled = false;
+	public double offset = 0.0;
+	public double goal = 0.0;
 
 	public Elevator() {
 		Hardware.elevatorLeft = new TalonSRX(Constants.kElevatorLeftTalonID);
@@ -25,10 +41,10 @@ public class Elevator extends Subsystem {
 		Hardware.bottomHallEffect = new DigitalInput(0);
 		Hardware.topHallEffect = new DigitalInput(1);
 
-//		Hardware.elevatorLeft.set(ControlMode.Follower, Hardware.elevatorRight.getDeviceID());
+		//		Hardware.elevatorLeft.set(ControlMode.Follower, Hardware.elevatorRight.getDeviceID());
 		Hardware.elevatorLeft.follow(Hardware.elevatorRight);
 		Hardware.elevatorRight.setInverted(false);
-//		Hardware.elevatorLeft.setInverted(false);
+		//		Hardware.elevatorLeft.setInverted(false);
 		//Hardware.elevatorRight.setInverted(true);
 
 		/* First choose the sensor. */
@@ -67,6 +83,14 @@ public class Elevator extends Subsystem {
 		Hardware.elevatorRight.setSelectedSensorPosition(0, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
 		Hardware.elevatorRight.configForwardSoftLimitThreshold((int)(UnitConverter.convertMetersToTicks(1.6)), 0);
 		Hardware.elevatorRight.configForwardSoftLimitEnable(true, 0);
+		new Notifier(new Runnable(){
+
+			@Override
+			public void run() {
+				loop();				
+			}
+
+		}).startPeriodic(0.02);
 	}
 
 	/*** Elevator Movement Methods ***/
@@ -79,9 +103,9 @@ public class Elevator extends Subsystem {
 		throttle *= -1;
 
 		if((getTopLimit() && throttle >= 0) || Robot.oi.getHoldPosition()) {
-			throttle = 1.0/12;
+			throttle = kHoldVoltage;
 		}
-		
+
 		SmartDashboard.putNumber("Applied Voltage", throttle * 12.0);
 		SmartDashboard.putNumber("Applied Current",  Hardware.elevatorRight.getOutputCurrent());
 		SmartDashboard.putNumber("Hardware.elevatorRight Encoder Reading", Hardware.elevatorRight.getSelectedSensorPosition(0));
@@ -89,23 +113,21 @@ public class Elevator extends Subsystem {
 	}
 
 	public void hold() {
-		Hardware.elevatorRight.set(ControlMode.PercentOutput, 1.0 / 12);
+		Hardware.elevatorRight.set(ControlMode.PercentOutput, kHoldVoltage);
 	}
 
 	/*** PID Methods ***/
 
-	double setpoint = 0.0;
 	public void setElevatorSetpoint(double height) { //meters
-		setpoint = UnitConverter.convertMetersToTicks(height);
-		Hardware.elevatorRight.set(ControlMode.Position, setpoint);
-//		Hardware.elevatorRight.set(ControlMode.Position, setpoint);
+		this.goal = UnitConverter.convertElevatorFeetToTicks(height);
+		updateState(ElevatorState.SETPOINT);
 	}
 
 
 	/*** Get Methods ***/
 
 	public double getError() {
-		return Math.abs(Hardware.elevatorRight.getSelectedSensorPosition(0) - setpoint);
+		return Math.abs(Hardware.elevatorRight.getSelectedSensorPosition(0) - goal);
 	}
 
 	public boolean getBottomLimit() {
@@ -116,30 +138,92 @@ public class Elevator extends Subsystem {
 		return !(Hardware.topHallEffect.get()); //false = magnet detected
 	}
 
+	public boolean goalReached() {
+		return getError() <= UnitConverter.convertInchesToTicks(1.0);
+	}
+
 	/*** Zeroing and Logging ***/
 
 	public void stop() {
 		Hardware.elevatorRight.set(ControlMode.PercentOutput, 0);
 	}
-	
+
+
+	public void updateState(ElevatorState state) {
+		currState = state;
+	}
+
+	public void enable(boolean enable) {
+		enabled = enable;
+	}
+
+	//Updated every 20ms
+	public void loop() {
+		switch(currState) {
+		case DISABLED:
+			if(enabled) {
+				updateState(ElevatorState.SETPOINT);
+			}
+			break;
+		case ZEROING:
+			if(!enabled) {
+				updateState(ElevatorState.DISABLED);
+			} else if(getBottomLimit()) {
+				stop();
+				Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
+				enable(false);
+				//					Robot.oi.rumbleOperator();
+			} else {
+				Hardware.elevatorRight.set(ControlMode.PercentOutput, 0.5/12.0);
+			}
+			break;
+		case SETPOINT:
+			if(goal > Constants.kMaxElevatorHeight) {
+				goal = Constants.kMaxElevatorHeight;
+			} else if(goal < Constants.kMinElevatorHeight) {
+				goal = Constants.kMinElevatorHeight;
+			}
+
+			if(!enabled) {
+				updateState(ElevatorState.DISABLED);
+			} else {
+				if(getError() <= UnitConverter.convertInchesToTicks(1.0)) {
+					updateState(ElevatorState.HOLD);
+				} else {
+					if(getTopLimit() && goal >= Hardware.elevatorRight.getSelectedSensorPosition(0)) {
+						updateState(ElevatorState.HOLD);
+					} else if(getBottomLimit() && goal <= Hardware.elevatorRight.getSelectedSensorPosition(0)) {
+						stop();
+					} else {
+						Hardware.elevatorRight.set(ControlMode.Position, goal);
+					}
+				}
+			}
+			break;
+		case HOLD:
+			if(!enabled) {
+				updateState(ElevatorState.DISABLED);
+			} else {
+				hold();
+			}
+		case MANUAL:
+			manualElevate(Robot.oi.getManualElevate());
+			break;
+		}
+	}
+
+
 	public void log() {
 		SmartDashboard.putNumber("Applied Current",  Hardware.elevatorRight.getOutputCurrent());
 		SmartDashboard.putNumber("Applied Voltage",  Hardware.elevatorRight.getMotorOutputVoltage());
 		SmartDashboard.putNumber("ClosedLoopError", Hardware.elevatorRight.getClosedLoopError(0));
-		SmartDashboard.putNumber("Current Elevator Position", UnitConverter.convertTicksToInches(Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
-		SmartDashboard.putNumber("Elevator Setpoint Ticks", setpoint);
-		SmartDashboard.putNumber("Elevator Error", UnitConverter.convertTicksToInches(setpoint - Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
+		SmartDashboard.putNumber("Current Elevator Position Feet", UnitConverter.convertElevatorTicksToFeet(Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
+		SmartDashboard.putNumber("Elevator Setpoint Ticks", goal);
+		SmartDashboard.putNumber("Elevator Error Inches", UnitConverter.convertTicksToInches(goal - Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
 		SmartDashboard.putBoolean("Bottom Hall Effect", getBottomLimit());
 		SmartDashboard.putBoolean("Top Hall Effect", getTopLimit());
-	}
-
-	public void zero() {
-		if (getBottomLimit()) {
-			stop();
-			Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
-		} else {
-			Hardware.elevatorRight.set(ControlMode.PercentOutput, 0.03);
-		}
+		SmartDashboard.putBoolean("Enabled", enabled);
+		SmartDashboard.putString("Elevator State", currState.toString());
 	}
 
 	/*** Other ***/
