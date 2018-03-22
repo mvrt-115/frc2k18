@@ -22,8 +22,8 @@ public class DriveScale extends CommandGroup {
 		this.startingPos = startingPos;
 
 		addSequential(new IntakeDown());
-		//		addSequential(new TimedCommand(0.5));
-		//		addSequential(new LiftIntake());
+		//	addSequential(new TimedCommand(0.5));
+		//	addSequential(new LiftIntake());
 
 		if(profileName == "left" && startingPos == "A") {
 
@@ -33,10 +33,10 @@ public class DriveScale extends CommandGroup {
 			addSequential(new DriveForDistance(Constants.distanceFromWallToScale, 0.0));
 			// Turn
 			addSequential(new PidTurn(60), 5);
-			//			addSequential(new PidTurn(45), 3);
+			// addSequential(new PidTurn(45), 3);
 			// Shoot
 			addSequential(new OuttakeCommand());
-			//			addSequential(new ElevateToScale("high", true), 3);
+			// addSequential(new ElevateToScale("high", true), 3);
 
 		}
 		else if (profileName == "right" && startingPos == "C") {
@@ -47,10 +47,10 @@ public class DriveScale extends CommandGroup {
 			addSequential(new DriveForDistance(Constants.distanceFromWallToScale, 0.0));
 			// Turn
 			addSequential(new PidTurn(-60.0), 5);
-			//			addSequential(new PidTurn(-45), 3);
-			//Shoot
+			// addSequential(new PidTurn(-45), 3);
+			// Shoot
 			addSequential(new OuttakeCommand());
-			//			addSequential(new ElevateToScale("high", true), 3);
+			// addSequential(new ElevateToScale("high", true), 3);
 
 		}
 		else if (profileName == "left" && startingPos == "C") {
@@ -68,7 +68,7 @@ public class DriveScale extends CommandGroup {
 			addSequential(new PidTurn(45), 3);
 			// Shoot
 			addSequential(new OuttakeCommand());
-//			addSequential(new ElevateToScale("high", true), 3);
+			// addSequential(new ElevateToScale("high", true), 3);
 
 		}
 		else if (profileName == "right" && startingPos == "A") {
@@ -86,7 +86,7 @@ public class DriveScale extends CommandGroup {
 			addSequential(new PidTurn(-45), 3);
 			// Shoot
 			addSequential(new OuttakeCommand());
-//			addSequential(new ElevateToScale("high", true), 3);
+			// addSequential(new ElevateToScale("high", true), 3);
 
 		}
 	}

@@ -83,7 +83,7 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	};
 
 	public DriveTrain() {
-		Hardware.shifter = new DoubleSolenoid(0, 3, 4);
+//		Hardware.shifter = new DoubleSolenoid(0, 3, 4);
 		Hardware.navX = new AHRS(SPI.Port.kMXP);
 
 		Hardware.driveFrontLeft = new TalonSRX(Constants.kDriveFrontLeftTalonID);

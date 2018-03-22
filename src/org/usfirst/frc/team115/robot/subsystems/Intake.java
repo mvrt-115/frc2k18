@@ -73,30 +73,17 @@ public class Intake extends Subsystem {
 		Robot.carriage.intakeCube(0.90);
 	}
 
-//	public void setOuttakeSpeed (double motorSpeed) {
-//		this.outtakeSpeed = motorSpeed;
-//	}
-	
-	
 	public void outtakeCube () {
-		// if (intake.get() != Value.kReverse) //check if already extended
-		// extendIntake();
 		Hardware.intakeLeft.set(ControlMode.PercentOutput, -0.65);
 		Hardware.intakeRight.set(ControlMode.PercentOutput, 0.65);
 		Robot.carriage.outtakeCube(-1);
-//		Robot.carriage.outtakeCube(outtakeSpeed);
 	}
 
 	public void stop()  {
 		Hardware.intakeLeft.set(ControlMode.PercentOutput, 0);
 		Hardware.intakeRight.set(ControlMode.PercentOutput, 0);
-		//	stowIntake();
-		//	retractIntake();
 		Robot.carriage.stop();
 	}
 
-	public void initDefaultCommand()  {
-		//	setDefaultCommand(new IntakeCommand());
-	}
-
+	public void initDefaultCommand() {}
 }

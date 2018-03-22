@@ -19,7 +19,7 @@ public class Hardware {
 	//CARRIAGE
 	public static TalonSRX carriageLeft;
 	public static TalonSRX carriageRight;
-	
+	public static DoubleSolenoid carriageClamp;
 	
 	//ELEVATOR
 	public static TalonSRX elevatorLeft;

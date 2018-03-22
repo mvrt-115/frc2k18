@@ -56,11 +56,6 @@ public class Robot extends IterativeRobot {
 		elevator = new Elevator();
 		oi = new OI();
 
-		// chooser.addDefault("Do Nothing", null);
-		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
-		// chooser.addObject("Drive Scale", new DriveScale());
-		// chooser.addObject("Drive Switch", new DriveSwitch());
-
 		SmartDashboard.putData("Auto mode", chooser);
 		SmartDashboard.putString(Constants.autonChoiceString, "DriveLine");
 		SmartDashboard.putString("Starting Position(A, B, C):", "N");
@@ -108,15 +103,8 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		elevator.enable(true);
 		elevator.updateState(ElevatorState.ZEROING);
-//		elevator.zeroed = true;
-		// autonomousCommand = chooser.getSelected();
 		drivetrain.zeroDrive();
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
+		
 
 		String gameData = DriverStation.getInstance().getGameSpecificMessage();
 		String robotStartingPos = "";
@@ -192,7 +180,7 @@ public class Robot extends IterativeRobot {
 					(new DriveSwitch("right", "C")).start();
 				}
 				else if (gameScaleConfig == 'R') {
-//					 (new DriveScale()).start();
+					// (new DriveScale()).start();
 					(new DriveAutoLine()).start();
 				}
 				else
@@ -250,22 +238,22 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		//		SmartDashboard.putBoolean("Limit Switch Pressed", limitSwitch.get());
+		// SmartDashboard.putBoolean("Limit Switch Pressed", limitSwitch.get());
 
-		//		SmartDashboard.putNumber("Sensor Reading", a);
-		//		SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
-		//		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());
-		//		SmartDashboard.putNumber("Right Vel", drivetrain.getRightVel());
-		//		SmartDashboard.putNumber("Left Vel", drivetrain.getLeftVel());
-		//		SmartDashboard.putNumber("Current Dist", drivetrain.getCurrentDist());
-		//		SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
-		//		SmartDashboard.putNumber("Sensor Reading", hallEffect.getAverageVoltage());
+		// SmartDashboard.putNumber("Sensor Reading", a);
+		// SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
+		// SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());
+		// SmartDashboard.putNumber("Right Vel", drivetrain.getRightVel());
+		// SmartDashboard.putNumber("Left Vel", drivetrain.getLeftVel());
+		// SmartDashboard.putNumber("Current Dist", drivetrain.getCurrentDist());
+		// SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
+		// SmartDashboard.putNumber("Sensor Reading", hallEffect.getAverageVoltage());
 		elevator.log();
 		drivetrain.log();
 		carriage.log();
 		SmartDashboard.putBoolean("Cube Detected?", carriage.cubeDetected());
-		//		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
-		//		SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
+		// SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
+		// SmartDashboard.putBoolean("BreakBeam Value", breakBeam.get());
 
 		/*	SmartDashboard.putNumber("Right Dist", drivetrain.getRightDist());
 		SmartDashboard.putNumber("Left Dist", drivetrain.getLeftDist());
@@ -275,9 +263,9 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Current Vel", drivetrain.getCurrentVel());
 		 */
 
-		//		SmartDashboard.putNumber("Elevator Encoder value", elevator.left.getSelectedSensorPosition(0));
+		// SmartDashboard.putNumber("Elevator Encoder value", elevator.left.getSelectedSensorPosition(0));
 
-		//	 chooser.addDefault("Do Nothing", null);
+		// chooser.addDefault("Do Nothing", null);
 		// chooser.addObject("Drive Auto Line", new DriveAutoLine());
 		// chooser.addObject("Drive Scale", new DriveScale());
 		// chooser.addObject("Drive Switch", new DriveSwitch());

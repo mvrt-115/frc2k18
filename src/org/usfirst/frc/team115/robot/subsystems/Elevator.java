@@ -42,11 +42,11 @@ public class Elevator extends Subsystem {
 		Hardware.bottomHallEffect = new DigitalInput(0);
 		Hardware.topHallEffect = new DigitalInput(1);
 
-		//		Hardware.elevatorLeft.set(ControlMode.Follower, Hardware.elevatorRight.getDeviceID());
+		// Hardware.elevatorLeft.set(ControlMode.Follower, Hardware.elevatorRight.getDeviceID());
 		Hardware.elevatorLeft.follow(Hardware.elevatorRight);
 		Hardware.elevatorRight.setInverted(false);
-		//		Hardware.elevatorLeft.setInverted(false);
-		//Hardware.elevatorRight.setInverted(true);
+		// Hardware.elevatorLeft.setInverted(false);
+		// Hardware.elevatorRight.setInverted(true);
 
 		/* First choose the sensor. */
 		Hardware.elevatorRight.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, Constants.kPIDLoopIdx, Constants.kTimeoutMs);
@@ -197,13 +197,13 @@ public class Elevator extends Subsystem {
 				}
 				else
 					Hardware.elevatorRight.set(ControlMode.PercentOutput, -2.0/12.0);
-//				Hardware.elevatorRight.set(ControlMode.PercentOutput, -3.0/12.0);
-//				goal = UnitConverter.convertInchesToTicks(1.0);
-//				if(getError() <= UnitConverter.convertInchesToTicks(3.0)) {
-//					stop();
-//				} else {
-//					Hardware.elevatorRight.set(ControlMode.Position, goal);
-//				}
+				// Hardware.elevatorRight.set(ControlMode.PercentOutput, -3.0/12.0);
+				// goal = UnitConverter.convertInchesToTicks(1.0);
+				// if(getError() <= UnitConverter.convertInchesToTicks(3.0)) {
+				//   stop();
+				// } else {
+				//   Hardware.elevatorRight.set(ControlMode.Position, goal);
+				// }
 			}
 			break;
 		case SETPOINT:
