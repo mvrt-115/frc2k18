@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putString(Constants.autonChoiceString, "DriveLine");
 		SmartDashboard.putString("Starting Position(A, B, C):", "N");
 		
-		Compressor compressor = new Compressor(1);
+		Compressor compressor = new Compressor(0);
 		compressor.setClosedLoopControl(true);
 		compressor.start();
 
@@ -82,11 +82,13 @@ public class Robot extends IterativeRobot {
 	public void disabledInit() {
 		SmartDashboard.putString(Constants.autonChoiceString, "DriveLine");
 		SmartDashboard.putString("Starting Position(A, B, C):", "N");
+		Robot.oi.stopRumble();
 	}
 
 	@Override
 	public void disabledPeriodic() {
 		Scheduler.getInstance().run();
+		Robot.oi.stopRumble();
 		elevator.log();
 		drivetrain.log();
 	}
@@ -106,6 +108,7 @@ public class Robot extends IterativeRobot {
 	public void autonomousInit() {
 		elevator.enable(true);
 		elevator.updateState(ElevatorState.ZEROING);
+//		elevator.zeroed = true;
 		// autonomousCommand = chooser.getSelected();
 		drivetrain.zeroDrive();
 		/*

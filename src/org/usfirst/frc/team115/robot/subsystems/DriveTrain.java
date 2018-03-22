@@ -83,7 +83,7 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	};
 
 	public DriveTrain() {
-		Hardware.shifter = new DoubleSolenoid(1, 3, 4);
+		Hardware.shifter = new DoubleSolenoid(0, 3, 4);
 		Hardware.navX = new AHRS(SPI.Port.kMXP);
 
 		Hardware.driveFrontLeft = new TalonSRX(Constants.kDriveFrontLeftTalonID);
@@ -375,7 +375,7 @@ public class DriveTrain extends Subsystem implements PIDOutput, PIDSource {
 	}
 	
 	public double getCurrentDist() {
-		double dist = UnitConverter.convertTicksToFeet((Hardware.driveFrontRight.getSelectedSensorPosition(0) + Hardware.driveFrontLeft.getSelectedSensorPosition(0))/2.0);
+		double dist = UnitConverter.convertDriveTicksToFeet((Hardware.driveFrontRight.getSelectedSensorPosition(0) + Hardware.driveFrontLeft.getSelectedSensorPosition(0))/2.0);
 		SmartDashboard.putNumber("Current Dist (in feet)", dist);
 		return dist;
 	}

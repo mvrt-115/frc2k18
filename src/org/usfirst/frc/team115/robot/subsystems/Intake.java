@@ -18,9 +18,9 @@ public class Intake extends Subsystem {
 	public Intake()  {
 		Hardware.intakeLeft = new TalonSRX(Constants.kIntakeLeftTalonID);
 		Hardware.intakeRight = new TalonSRX(Constants.kIntakeRightTalonID);
-		Hardware.intakeExtendSolenoid = new DoubleSolenoid(1, 6, 1);
-		Hardware.intakeStowLeft = new DoubleSolenoid(1, 0, 7);
-		Hardware.intakeStowRight = new DoubleSolenoid(1, 2, 5);
+		Hardware.intakeExtendSolenoid = new DoubleSolenoid(0, 6, 1);
+		Hardware.intakeStowLeft = new DoubleSolenoid(0, 0, 7);
+		Hardware.intakeStowRight = new DoubleSolenoid(0, 2, 5);
 		
 		Hardware.intakeLeft.configContinuousCurrentLimit(10, 0);
 		Hardware.intakeRight.configContinuousCurrentLimit(10, 0);
@@ -64,8 +64,12 @@ public class Intake extends Subsystem {
 		} else {
 			retractIntake();
 		}
-		Hardware.intakeLeft.set(ControlMode.PercentOutput, 0.75);
-		Hardware.intakeRight.set(ControlMode.PercentOutput, -0.75);
+		double intakeSpeed =  Math.abs(Robot.oi.getThrottle()) * 2.0;
+		if(intakeSpeed < 0.3) {
+			intakeSpeed = 0.5;
+		}
+		Hardware.intakeLeft.set(ControlMode.PercentOutput, intakeSpeed); //0.75
+		Hardware.intakeRight.set(ControlMode.PercentOutput, -intakeSpeed); //-0.75
 		Robot.carriage.intakeCube(0.90);
 	}
 

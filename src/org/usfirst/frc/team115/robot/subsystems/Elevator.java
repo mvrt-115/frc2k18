@@ -33,6 +33,7 @@ public class Elevator extends Subsystem {
 	public boolean enabled = false;
 	public double offset = 0.0;
 	public double goal = 0.0;
+	public boolean zeroed = false;
 
 	public Elevator() {
 		Hardware.elevatorLeft = new TalonSRX(Constants.kElevatorLeftTalonID);
@@ -63,7 +64,7 @@ public class Elevator extends Subsystem {
 			Hardware.elevatorLeft.configPeakOutputReverse(-0.4, Constants.kTimeoutMs);
 		}
 		else {
-			Hardware.elevatorRight.configPeakOutputForward(0.8, Constants.kTimeoutMs);
+			Hardware.elevatorRight.configPeakOutputForward(0.95, Constants.kTimeoutMs);
 			Hardware.elevatorRight.configPeakOutputReverse(-0.8, Constants.kTimeoutMs);
 		}
 
@@ -72,6 +73,10 @@ public class Elevator extends Subsystem {
 		//		Hardware.elevatorLeft.config_kF(0, Constants.kElevatorF, Constants.kTimeoutMs);
 		Hardware.elevatorRight.config_kP(0, Constants.kElevatorP, Constants.kTimeoutMs);
 		Hardware.elevatorRight.config_kD(0, Constants.kElevatorD, Constants.kTimeoutMs);
+
+		//		Hardware.elevatorLeft.config_kF(0, Constants.kElevatorF, Constants.kTimeoutMs);
+		Hardware.elevatorRight.config_kP(1, Constants.kElevatorP, Constants.kTimeoutMs);
+		Hardware.elevatorRight.config_kD(1, Constants.kElevatorD, Constants.kTimeoutMs);
 
 		Hardware.elevatorRight.configAllowableClosedloopError(Constants.kSlotIdx, (int)(UnitConverter.convertInchesToTicks(1.1)), Constants.kTimeoutMs);
 
@@ -90,7 +95,7 @@ public class Elevator extends Subsystem {
 				loop();				
 			}
 
-		}).startPeriodic(0.02);
+		}).startPeriodic(0.005);
 	}
 
 	/*** Elevator Movement Methods ***/
@@ -113,13 +118,16 @@ public class Elevator extends Subsystem {
 	}
 
 	public void hold() {
-		Hardware.elevatorRight.set(ControlMode.PercentOutput, kHoldVoltage);
+		//		Hardware.elevatorRight.selectProfileSlot(1, 1);
+		//		Hardware.elevatorRight.set(ControlMode.Position, goal);
+		//		Hardware.elevatorRight.set(ControlMode.PercentOutput, kHoldVoltage);
 	}
 
 	/*** PID Methods ***/
 
 	public void setElevatorSetpoint(double height) { //meters
 		this.goal = UnitConverter.convertElevatorFeetToTicks(height);
+		System.out.println("Set Goal Value: " + this.goal);
 		updateState(ElevatorState.SETPOINT);
 	}
 
@@ -157,7 +165,9 @@ public class Elevator extends Subsystem {
 		enabled = enable;
 	}
 
-	//Updated every 20ms
+	
+
+	//Updated every 5ms
 	public void loop() {
 		switch(currState) {
 		case DISABLED:
@@ -168,33 +178,60 @@ public class Elevator extends Subsystem {
 		case ZEROING:
 			if(!enabled) {
 				updateState(ElevatorState.DISABLED);
-			} else if(getBottomLimit()) {
+			} else if(getBottomLimit() && !zeroed) {
 				stop();
 				Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
-				enable(false);
-				//					Robot.oi.rumbleOperator();
+				for(int i = 0; i < 100; i++)
+					Robot.oi.rumbleJoystick();
+				zeroed = true;
+			} else if(zeroed) {
+				Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
+				Robot.oi.stopRumble();
 			} else {
-				Hardware.elevatorRight.set(ControlMode.PercentOutput, 0.5/12.0);
+				if (Hardware.elevatorRight.getSelectedSensorPosition(0) > UnitConverter.convertInchesToTicks(3.0)) {
+					goal = UnitConverter.convertInchesToTicks(3.0);
+					if (getError() <= UnitConverter.convertInchesToTicks(2.0))
+						stop();
+					else
+						Hardware.elevatorRight.set(ControlMode.Position, goal);
+				}
+				else
+					Hardware.elevatorRight.set(ControlMode.PercentOutput, -2.0/12.0);
+//				Hardware.elevatorRight.set(ControlMode.PercentOutput, -3.0/12.0);
+//				goal = UnitConverter.convertInchesToTicks(1.0);
+//				if(getError() <= UnitConverter.convertInchesToTicks(3.0)) {
+//					stop();
+//				} else {
+//					Hardware.elevatorRight.set(ControlMode.Position, goal);
+//				}
 			}
 			break;
 		case SETPOINT:
-			if(goal > Constants.kMaxElevatorHeight) {
-				goal = Constants.kMaxElevatorHeight;
-			} else if(goal < Constants.kMinElevatorHeight) {
-				goal = Constants.kMinElevatorHeight;
-			}
+			zeroed = false;
+			double maxHeight = UnitConverter.convertElevatorFeetToTicks(Constants.kMaxElevatorHeight);
+			double minHeight = UnitConverter.convertElevatorFeetToTicks(Constants.kMinElevatorHeight);
+			
+			goal = Math.min(goal, maxHeight);
+			goal = Math.max(goal, minHeight);
+
+			Hardware.elevatorRight.selectProfileSlot(0, 0);
 
 			if(!enabled) {
 				updateState(ElevatorState.DISABLED);
 			} else {
 				if(getError() <= UnitConverter.convertInchesToTicks(1.0)) {
-					updateState(ElevatorState.HOLD);
+					System.out.println("Found goal! " + goal + ", " + getError());
+					//					updateState(ElevatorState.HOLD);
 				} else {
 					if(getTopLimit() && goal >= Hardware.elevatorRight.getSelectedSensorPosition(0)) {
-						updateState(ElevatorState.HOLD);
+						System.out.println("Holding at topLimit");
+						Hardware.elevatorRight.set(ControlMode.Position, Hardware.elevatorRight.getSelectedSensorPosition(0));
+						//						updateState(ElevatorState.HOLD);
 					} else if(getBottomLimit() && goal <= Hardware.elevatorRight.getSelectedSensorPosition(0)) {
+						System.out.println("Stopping at bottomLimit");
 						stop();
 					} else {
+						System.out.println("PID ControlMode.Position...");
 						Hardware.elevatorRight.set(ControlMode.Position, goal);
 					}
 				}
@@ -204,7 +241,11 @@ public class Elevator extends Subsystem {
 			if(!enabled) {
 				updateState(ElevatorState.DISABLED);
 			} else {
-				hold();
+				if(getError() <= UnitConverter.convertInchesToTicks(1.0)) {
+					hold();
+				} else {
+					updateState(ElevatorState.SETPOINT);
+				}
 			}
 		case MANUAL:
 			manualElevate(Robot.oi.getManualElevate());
@@ -217,7 +258,8 @@ public class Elevator extends Subsystem {
 		SmartDashboard.putNumber("Applied Current",  Hardware.elevatorRight.getOutputCurrent());
 		SmartDashboard.putNumber("Applied Voltage",  Hardware.elevatorRight.getMotorOutputVoltage());
 		SmartDashboard.putNumber("ClosedLoopError", Hardware.elevatorRight.getClosedLoopError(0));
-		SmartDashboard.putNumber("Current Elevator Position Feet", UnitConverter.convertElevatorTicksToFeet(Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
+		SmartDashboard.putNumber("Current Elevator Position Feet", UnitConverter.convertElevatorTicksToFeet(Hardware.elevatorRight.getSelectedSensorPosition(0)));
+		SmartDashboard.putNumber("Current Elevator Position Ticks", (Hardware.elevatorRight.getSelectedSensorPosition(0)));
 		SmartDashboard.putNumber("Elevator Setpoint Ticks", goal);
 		SmartDashboard.putNumber("Elevator Error Inches", UnitConverter.convertTicksToInches(goal - Hardware.elevatorRight.getSelectedSensorPosition(0) * 0.0254));
 		SmartDashboard.putBoolean("Bottom Hall Effect", getBottomLimit());

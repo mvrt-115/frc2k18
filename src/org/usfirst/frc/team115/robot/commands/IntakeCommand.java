@@ -27,10 +27,12 @@ public class IntakeCommand extends Command {
 
 	protected void end() {
 		if(Robot.carriage.cubeDetected()) {
+			Robot.oi.rumbleJoystick();
 			Robot.intake.stallIntake();
 		} else {
 			Robot.intake.stop();
 		}
+		Robot.oi.stopRumble();
 	}
 
 	protected void interrupted() {

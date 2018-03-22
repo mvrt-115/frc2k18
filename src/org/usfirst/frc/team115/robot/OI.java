@@ -9,6 +9,7 @@ import org.usfirst.frc.team115.robot.commands.OuttakeCommand;
 import org.usfirst.frc.team115.robot.commands.WideIntakeCommand;
 import org.usfirst.frc.team115.robot.commands.ZeroElevator;
 
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 
@@ -76,6 +77,16 @@ public class OI {
 		raiseIntake.whenPressed(new LiftIntake());
 	}
 
+	public void rumbleJoystick() {
+		operatorPanel.setRumble(RumbleType.kLeftRumble, 0.5);
+		operatorPanel.setRumble(RumbleType.kRightRumble, 0.5);
+	}
+	
+	public void stopRumble() {
+		operatorPanel.setRumble(RumbleType.kLeftRumble, 0);
+		operatorPanel.setRumble(RumbleType.kRightRumble, 0);
+	}
+	
 	public boolean getManualMode() {
 		return manualMode.get();
 	}
