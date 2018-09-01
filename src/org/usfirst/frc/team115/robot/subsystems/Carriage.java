@@ -20,7 +20,7 @@ public class Carriage extends Subsystem {
 		Hardware.carriageRight.set(ControlMode.Follower, Hardware.carriageLeft.getDeviceID());
 		Hardware.carriageRight.setInverted(true);
 		Hardware.carriageClamp = new DoubleSolenoid(0, 3, 4);
-		Hardware.carriageBreakbeam = new DigitalInput(2);
+		Hardware.carriageBreakbeam = new DigitalInput(8);
 	}
 	
 	public void intakeCube (double motorSpeed) {

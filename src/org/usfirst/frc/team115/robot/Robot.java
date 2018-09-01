@@ -86,6 +86,7 @@ public class Robot extends IterativeRobot {
 		Robot.oi.stopRumble();
 		elevator.log();
 		drivetrain.log();
+		carriage.log();
 	}
 
 	/**
@@ -125,19 +126,20 @@ public class Robot extends IterativeRobot {
 					if (gameScaleConfig == 'L')
 						(new TwoCubeScaleSwitch("left", "A")).start();
 					else
-						(new DriveSwitch("left", "A")).start();
+						(new DriveScale("right", "A")).start();
 				}
 				else if (gameScaleConfig == 'L')
 					(new DriveScale("left", "A")).start();
 				else
-					(new DriveAutoLine()).start();
+					(new DriveScale("right", "A")).start(); //DO WE DO THIS?
+//					(new DriveAutoLine()).start();
 			}
 			else if (autonChoice.equalsIgnoreCase("Switch")) {
 				if (gameSwitchConfig == 'L')
 					(new DriveSwitch("left", "A")).start();
 				else if (gameScaleConfig == 'L') {
-					// (new DriveScale()).start();
-					(new DriveAutoLine()).start();
+					 (new DriveScale("left", "A")).start();
+//					(new DriveAutoLine()).start();
 				}
 				else
 					(new DriveAutoLine()).start();
@@ -166,12 +168,13 @@ public class Robot extends IterativeRobot {
 					if (gameScaleConfig == 'R')
 						(new TwoCubeScaleSwitch("right", "C")).start();
 					else
-						(new DriveSwitch("right", "C")).start();
+						(new DriveScale("left", "C")).start();
 				}
 				else if (gameScaleConfig == 'R')
 					(new DriveScale("right", "C")).start();
 				else
-					(new DriveAutoLine()).start();
+					(new DriveScale("left", "C")).start();
+//					(new DriveAutoLine()).start();
 			}
 			else if (autonChoice.equalsIgnoreCase("Switch")) {
 				System.out.println("C switch");
@@ -180,8 +183,8 @@ public class Robot extends IterativeRobot {
 					(new DriveSwitch("right", "C")).start();
 				}
 				else if (gameScaleConfig == 'R') {
-					// (new DriveScale()).start();
-					(new DriveAutoLine()).start();
+					 (new DriveScale("right", "C")).start();
+//					(new DriveAutoLine()).start();
 				}
 				else
 					(new DriveAutoLine()).start();
@@ -215,6 +218,7 @@ public class Robot extends IterativeRobot {
 		//SmartDashboard.putNumber("turnController error", Robot.drivetrain.turnController.getError());
 		//SmartDashboard.putNumber("driveStraightController error", Robot.drivetrain.driveStraightController.getError());
 		//SmartDashboard.putNumber("Pid Driving State", Robot.drivetrain.state);
+		elevator.log();
 		SmartDashboard.putNumber("Distance", drivetrain.getCurrentDist());
 		SmartDashboard.putNumber("Distance Error", drivetrain.getError());
 		SmartDashboard.putNumber("DriveDistanceController value", drivetrain.driveDistanceController.get());
@@ -229,7 +233,7 @@ public class Robot extends IterativeRobot {
 		if (autonomousCommand != null)
 			autonomousCommand.cancel();
 		elevator.enable(true);
-		elevator.updateState(ElevatorState.ZEROING);
+//		elevator.updateState(ElevatorState.ZEROING);
 	}
 
 	/**

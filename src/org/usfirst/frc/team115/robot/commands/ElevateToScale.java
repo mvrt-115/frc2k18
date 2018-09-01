@@ -42,10 +42,7 @@ public class ElevateToScale extends InstantCommand {
 //	}
 
 	public void end() {
-//		Robot.elevator.zero();
-//		if(isAuton) {
-//			Robot.intake.stop();
-//		}
+//		Robot.elevator.enable(false);
 	}
 
 }

@@ -9,8 +9,17 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class IntakeCommand extends Command {
 
+	
+	boolean isAuton = false;
+	
+	public IntakeCommand(boolean isAuton) {
+		requires(Robot.intake);
+		this.isAuton = isAuton;
+	}
+	
 	public IntakeCommand() {
 		requires(Robot.intake);
+		isAuton = false;
 	}
 
 	protected void initialize() {
@@ -22,17 +31,23 @@ public class IntakeCommand extends Command {
 	}
 
 	protected boolean isFinished() {
-		return (!(Robot.oi.intakePressed())) || Robot.carriage.cubeDetected();
+		if(isAuton)
+			return false;//Robot.carriage.cubeDetected();
+		else
+			return (!(Robot.oi.intakePressed())) || Robot.carriage.cubeDetected();
 	}
 
 	protected void end() {
 		if(Robot.carriage.cubeDetected()) {
-			Robot.oi.rumbleJoystick();
-			Robot.intake.stallIntake();
+			Robot.intake.stop();
+			for(int i=0; i<200;i ++) {
+				Robot.oi.rumbleJoystick();
+			}
+			Robot.oi.stopRumble();
 		} else {
 			Robot.intake.stop();
 		}
-		Robot.oi.stopRumble();
+
 	}
 
 	protected void interrupted() {

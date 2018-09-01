@@ -58,14 +58,16 @@ public class Elevator extends Subsystem {
 
 
 		if (limitVoltage) {
-			Hardware.elevatorRight.configPeakOutputForward(0.4, Constants.kTimeoutMs);
-			Hardware.elevatorRight.configPeakOutputReverse(-0.4, Constants.kTimeoutMs);
-			Hardware.elevatorLeft.configPeakOutputForward(0.4, Constants.kTimeoutMs);
-			Hardware.elevatorLeft.configPeakOutputReverse(-0.4, Constants.kTimeoutMs);
+			Hardware.elevatorRight.configPeakOutputForward(0.2, Constants.kTimeoutMs);
+			Hardware.elevatorRight.configPeakOutputReverse(-0.2, Constants.kTimeoutMs);
+			Hardware.elevatorLeft.configPeakOutputForward(0.2, Constants.kTimeoutMs);
+			Hardware.elevatorLeft.configPeakOutputReverse(-0.2, Constants.kTimeoutMs);
 		}
 		else {
 			Hardware.elevatorRight.configPeakOutputForward(0.95, Constants.kTimeoutMs);
-			Hardware.elevatorRight.configPeakOutputReverse(-0.8, Constants.kTimeoutMs);
+			Hardware.elevatorRight.configPeakOutputReverse(-0.50, Constants.kTimeoutMs);
+			Hardware.elevatorLeft.configPeakOutputForward(0.95, Constants.kTimeoutMs);
+			Hardware.elevatorLeft.configPeakOutputReverse(-0.50, Constants.kTimeoutMs);
 		}
 
 		/* set closed loop gains in slot0 - see documentation */
@@ -177,26 +179,34 @@ public class Elevator extends Subsystem {
 			break;
 		case ZEROING:
 			if(!enabled) {
+				System.out.println("NOT ENABLED");
 				updateState(ElevatorState.DISABLED);
 			} else if(getBottomLimit() && !zeroed) {
+				System.out.println("ZEROED");
 				stop();
 				Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
-				for(int i = 0; i < 100; i++)
+				for(int i = 0; i < 200; i++)
 					Robot.oi.rumbleJoystick();
 				zeroed = true;
 			} else if(zeroed) {
+				System.out.println("ZEROED!!");
 				Hardware.elevatorRight.setSelectedSensorPosition(0, 0, 0);
 				Robot.oi.stopRumble();
 			} else {
-				if (Hardware.elevatorRight.getSelectedSensorPosition(0) > UnitConverter.convertInchesToTicks(3.0)) {
-					goal = UnitConverter.convertInchesToTicks(3.0);
-					if (getError() <= UnitConverter.convertInchesToTicks(2.0))
+				System.out.println("ZEROING");
+				if (Hardware.elevatorRight.getSelectedSensorPosition(0) > UnitConverter.convertInchesToTicks(5.0)) {
+					goal = UnitConverter.convertInchesToTicks(5.0);
+					if (getError() <= UnitConverter.convertInchesToTicks(0.5))
 						stop();
 					else
 						Hardware.elevatorRight.set(ControlMode.Position, goal);
 				}
-				else
-					Hardware.elevatorRight.set(ControlMode.PercentOutput, -2.0/12.0);
+				else {
+					System.out.println("MOVING DOWN");
+					//Hardware.elevatorRight.set(ControlMode.PercentOutput, -4.0/12.0);
+					Hardware.elevatorRight.set(ControlMode.PercentOutput, 0);
+
+				}
 				// Hardware.elevatorRight.set(ControlMode.PercentOutput, -3.0/12.0);
 				// goal = UnitConverter.convertInchesToTicks(1.0);
 				// if(getError() <= UnitConverter.convertInchesToTicks(3.0)) {
@@ -225,7 +235,7 @@ public class Elevator extends Subsystem {
 				} else {
 					if(getTopLimit() && goal >= Hardware.elevatorRight.getSelectedSensorPosition(0)) {
 						System.out.println("Holding at topLimit");
-						Hardware.elevatorRight.set(ControlMode.Position, Hardware.elevatorRight.getSelectedSensorPosition(0));
+//						Hardware.elevatorRight.set(ControlMode.Position, Hardware.elevatorRight.getSelectedSensorPosition(0));
 						//						updateState(ElevatorState.HOLD);
 					} else if(getBottomLimit() && goal <= Hardware.elevatorRight.getSelectedSensorPosition(0)) {
 						System.out.println("Stopping at bottomLimit");
@@ -266,6 +276,8 @@ public class Elevator extends Subsystem {
 		SmartDashboard.putBoolean("Top Hall Effect", getTopLimit());
 		SmartDashboard.putBoolean("Enabled", enabled);
 		SmartDashboard.putString("Elevator State", currState.toString());
+		SmartDashboard.putNumber("Current Elevator Position Inches", (12 * (UnitConverter.convertElevatorTicksToFeet(Hardware.elevatorRight.getSelectedSensorPosition(0)))));
+
 	}
 
 	/*** Other ***/

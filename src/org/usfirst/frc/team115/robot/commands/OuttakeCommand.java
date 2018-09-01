@@ -9,15 +9,25 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class OuttakeCommand extends Command {
 	
+	boolean drop = false;
+	
 	public OuttakeCommand() {
 		requires(Robot.intake);
+	}
+	
+	public OuttakeCommand(boolean drop) {
+		this.drop = drop;
 	}
 
 	protected void initialize() {
 	}
 
 	protected void execute() {
-		Robot.intake.outtakeCube();
+		if(drop) {
+			Robot.intake.dropCube();
+		} else {
+			Robot.intake.outtakeCube();
+		}
 	}
 
 	protected boolean isFinished() {

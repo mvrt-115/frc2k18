@@ -64,12 +64,12 @@ public class Intake extends Subsystem {
 		} else {
 			retractIntake();
 		}
-		double intakeSpeed =  Math.abs(Robot.oi.getThrottle()) * 2.0;
-		if(intakeSpeed < 0.3) {
-			intakeSpeed = 0.5;
-		}
-		Hardware.intakeLeft.set(ControlMode.PercentOutput, intakeSpeed); //0.75
-		Hardware.intakeRight.set(ControlMode.PercentOutput, -intakeSpeed); //-0.75
+//		double intakeSpeed =  Math.abs(Robot.oi.getThrottle()) * 2.0;
+//		if(intakeSpeed < 0.3) {
+//			intakeSpeed = 0.5;
+//		}
+		Hardware.intakeLeft.set(ControlMode.PercentOutput, 0.75); //0.75
+		Hardware.intakeRight.set(ControlMode.PercentOutput, -0.75); //-0.75
 		Robot.carriage.intakeCube(0.90);
 	}
 
@@ -77,6 +77,18 @@ public class Intake extends Subsystem {
 		Hardware.intakeLeft.set(ControlMode.PercentOutput, -0.65);
 		Hardware.intakeRight.set(ControlMode.PercentOutput, 0.65);
 		Robot.carriage.outtakeCube(-1);
+	}
+	
+	public void dropCube() {
+		Hardware.intakeLeft.set(ControlMode.PercentOutput, -0.65);
+		Hardware.intakeRight.set(ControlMode.PercentOutput, 0.65);
+		Robot.carriage.outtakeCube(-0.5);
+	}
+	
+	public void softDropCube() {
+		Hardware.intakeLeft.set(ControlMode.PercentOutput, -0.65);
+		Hardware.intakeRight.set(ControlMode.PercentOutput, 0.65);
+		Robot.carriage.outtakeCube(-0.4);
 	}
 
 	public void stop()  {

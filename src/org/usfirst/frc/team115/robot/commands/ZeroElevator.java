@@ -12,8 +12,9 @@ public class ZeroElevator extends InstantCommand {
 	}
 	
 	public void initialize() {
-		Robot.elevator.enable(true);
+		System.out.println("ZEROING COMMAND");
 		Robot.elevator.updateState(ElevatorState.ZEROING);
+		Robot.elevator.enable(true);
 	}
 	
 //	public void end() {

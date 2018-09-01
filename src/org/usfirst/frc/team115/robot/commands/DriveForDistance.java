@@ -8,7 +8,7 @@ public class DriveForDistance extends Command {
 	
 	private double setpoint;
 	private double heading;
-	private double tolerance = 0.02;
+	private double tolerance = 1.0;
 	
 	public DriveForDistance(double setpoint, double heading) {
 		this.setpoint = setpoint;

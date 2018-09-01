@@ -75,8 +75,8 @@ public class Constants {
 	public static double kMaxElevatorHeight = 3.937;
 	public static double kLowScaleHeight = 2.657;
 	public static double kDefaultScaleHeight = 3.182;
-	public static double kHighScaleHeight = 3.773;
-	public static double kDefaultSwitchHeight = 1.148;
+	public static double kHighScaleHeight = 3.182 + (4.0/12.0); //3.773
+	public static double kDefaultSwitchHeight = 1.148 + (6.0/12.0);
 	
 //	/*** Deprecated Scale Height Values (in meters) ***/
 	 public static double offset = 0.127;
@@ -94,6 +94,6 @@ public class Constants {
 	public static double distanceFromWallToAlley = 236.0/12.0;
 	public static double distanceFromAlleyToSwitch = 68.0/12.0;
 	public static double alleyDistanceToSwitch = 236.0/12.0;
-	public static double alleyDistanceToScale = 236.0/12.0;
+	public static double alleyDistanceToScale = 220.0/12.0;//236.0/12.0;
 	
 }

@@ -12,6 +12,7 @@ import org.usfirst.frc.team115.robot.commands.ZeroElevator;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.TimedCommand;
 
 
 /**
@@ -23,6 +24,7 @@ public class OI {
 	Joystick driverJoystick;
 	JoystickButton intake;
 	JoystickButton outtake;
+	JoystickButton drop;
 	JoystickButton carriage;
 	JoystickButton wideIntake;
 	JoystickButton raiseIntake;
@@ -49,6 +51,17 @@ public class OI {
 				return operatorPanel.getRawAxis(Constants.kOuttake) >= 0.3;
 			}
 		};
+		drop = new JoystickButton(operatorPanel, 6);
+		drop.whenPressed(new TimedCommand(0.75) {
+			public void execute() {
+				Robot.intake.softDropCube();
+			}
+			
+			public void end() {
+				Robot.intake.stop();
+			}
+		});
+		
 		
 		defaultSwitchElevate = new JoystickButton(operatorPanel, Constants.kSwitch);
 		
