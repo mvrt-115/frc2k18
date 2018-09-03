@@ -1,28 +1,30 @@
 package org.usfirst.frc.team115.robot.commands;
 
 import org.usfirst.frc.team115.robot.Robot;
+import org.usfirst.frc.team115.robot.subsystems.Elevator.ElevatorState;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
-public class ManualElevate extends Command{
+public class ManualElevate extends InstantCommand{
 
 	public ManualElevate() {
 		requires(Robot.elevator);
 	}
-	
+
+	protected void initialize() {
+		Robot.intake.extendIntake();
+		Robot.elevator.enable(true);
+		Robot.elevator.updateState(ElevatorState.MANUAL);
+	}
+
 	public void execute() {
-		// if(Robot.oi.manualElevatePressed())
-		Robot.elevator.manualElevate(Robot.oi.getManualElevate());
-		
+//		Robot.elevator.manualElevate(Robot.oi.getManualElevate());
 	}
 
-	protected boolean isFinished() {
-		return false;
-		// return !Robot.oi.manualElevatePressed();
-	}
+//	protected boolean isFinished() {
+//		return false;
+//	}
 
-	public void end() {
-//		Robot.elevator.zero();
-	}
+	public void end() {}
 
 }

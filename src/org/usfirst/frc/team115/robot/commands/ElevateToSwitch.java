@@ -1,36 +1,43 @@
 package org.usfirst.frc.team115.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team115.robot.Constants;
 import org.usfirst.frc.team115.robot.Robot;
 
-public class ElevateToSwitch extends Command {
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
-	private String configuration;
 
-	public ElevateToSwitch(String configuration) {
-		this.configuration = configuration;
+public class ElevateToSwitch extends InstantCommand {
+
+	boolean isAuton;
+	
+	public ElevateToSwitch(boolean isAuton) {
 		requires(Robot.elevator);
+		this.isAuton = isAuton;
 	}
 
 	public void initialize() {
-//		if (configuration == "high")
-//			Robot.elevator.setElevatorSetpoint(Constants.kHighSwitchHeight);
-//		if (configuration == "default")
-			Robot.elevator.setElevatorSetpoint(Constants.kDefaultSwitchHeight);
+		Robot.intake.extendIntake();
+		Robot.elevator.setElevatorSetpoint(Constants.kDefaultSwitchHeight);
+		Robot.elevator.enable(true);
 	}
 
 	public void execute() {
-		if(Robot.elevator.getError() <= 455.0) {
-			Robot.elevator.hold();
-		} 
-	}
-
-	@Override
-	protected boolean isFinished() {
-		return false;
+//		Robot.elevator.manualElevate(-0.3);
+//		if(Robot.elevator.getTopLimit()) {
+//		if(Robot.elevator.getError() <= UnitConverter.convertInchesToTicks(1.0)) {
+//			Robot.elevator.hold();
+//			if(isAuton) {
+//				Robot.intake.setOuttakeSpeed(-0.5);
+//				Robot.intake.outtakeCube();
+//			}
+//		}
 	}
 
 	public void end() {
+//		Robot.elevator.updateState(ElevatorState.ZEROING);
+//		if(isAuton) {
+//			Robot.intake.stop();
+//			Robot.intake.setOuttakeSpeed(-1.0);
+//		}
 	}
 }

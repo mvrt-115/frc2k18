@@ -1,38 +1,66 @@
 package org.usfirst.frc.team115.robot.subsystems;
 
-import org.usfirst.frc.team115.robot.commands.CarriageCommand;
+import org.usfirst.frc.team115.robot.Constants;
+import org.usfirst.frc.team115.robot.Hardware;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Carriage extends Subsystem {
 	
-	private TalonSRX left, right;
-	
 	public Carriage()  {
-		left = new TalonSRX(41);	
-		right = new TalonSRX(1);
-		
-		right.set(ControlMode.Follower, left.getDeviceID());
-		right.setInverted(true);
+		Hardware.carriageLeft = new TalonSRX(Constants.kCarriageLeftTalonID);	
+		Hardware.carriageRight = new TalonSRX(Constants.kCarriageRightTalonID);
+		Hardware.carriageRight.set(ControlMode.Follower, Hardware.carriageLeft.getDeviceID());
+		Hardware.carriageRight.setInverted(true);
+		Hardware.carriageClamp = new DoubleSolenoid(0, 3, 4);
+		Hardware.carriageBreakbeam = new DigitalInput(8);
 	}
 	
 	public void intakeCube (double motorSpeed) {
-		left.set(ControlMode.PercentOutput, motorSpeed);
+		if (isClamped())
+			unclampCube();
+		Hardware.carriageLeft.set(ControlMode.PercentOutput, motorSpeed);
 	}
 	
-	public void outtakeCube (double motorSpeed) { //motorSpeed should be negative
-		left.set(ControlMode.PercentOutput, (motorSpeed > 0 ? -1.0 : 1.0) * motorSpeed);
+	public void outtakeCube (double motorSpeed) {
+		if (isClamped())
+			unclampCube();
+		Hardware.carriageLeft.set(ControlMode.PercentOutput, motorSpeed);
+	}
+	
+	public boolean isClamped() {
+		return (Hardware.carriageClamp.get() == Value.kForward);
+	}
+	
+	public void clampCube() {
+		Hardware.carriageClamp.set(Value.kForward);
+	}
+	
+	public void unclampCube() {
+		Hardware.carriageClamp.set(Value.kReverse);
+	}
+	
+	public boolean cubeDetected() {
+		return !(Hardware.carriageBreakbeam.get()); 
+	}
+	
+	public void log() {
+		SmartDashboard.putBoolean("Carriage Breakbeam", cubeDetected());
 	}
 	
 	public void stop()  {
-		left.set(ControlMode.PercentOutput, 0);
+		if (cubeDetected())
+			clampCube();
+		Hardware.carriageLeft.set(ControlMode.PercentOutput, 0.0);
+		
 	}
-	
-	protected void initDefaultCommand() {
-		setDefaultCommand(new CarriageCommand());
-	}
+	protected void initDefaultCommand() {}
 
 }

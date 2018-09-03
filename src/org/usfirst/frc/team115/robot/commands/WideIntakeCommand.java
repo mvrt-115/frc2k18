@@ -4,29 +4,30 @@ import org.usfirst.frc.team115.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class CarriageCommand extends Command {
+public class WideIntakeCommand extends Command {
 
-	public CarriageCommand() {
-		requires(Robot.carriage);
+	public WideIntakeCommand() {
+		requires(Robot.intake);
 	}
 
 	protected void initialize() {
-		
+		Robot.intake.intakeDown();
 	}
 
 	protected void execute() {
-		Robot.carriage.intakeCube(1); //values tbd
+		Robot.intake.intakeCube(true);
 	}
 
 	protected boolean isFinished() {
-		return !(Robot.oi.intakePressed());
+		return !(Robot.oi.wideIntake());
 	}
 
 	protected void end() {
-		Robot.carriage.stop();
+		Robot.intake.stop();
 	}
 
 	protected void interrupted() {
 		end();
 	}
+	
 }

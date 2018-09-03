@@ -10,19 +10,40 @@ package org.usfirst.frc.team115.robot;
  */
 public class Constants {
 
-	public static double kDriveP = 0.0;
-	public static double kDriveI = 0.0;
-	public static double kDriveD = 0.0;
-	public static double kDriveF = 0.0;
+	public static double kDriveP = 1.1 * 1.0/22.0; 
+	public static double kDriveI = 0.00;
+	public static double kDriveD = 1 / (8.0 * 4.5);
+	public static double kDriveFrontLeftF = 1023 * 0.7576 / 3488.0;
+	public static double kDriveFrontRightF = 1023 * 0.8591 / 5098.0;
 	
-	public static double kElevatorP = 2.4;
+	public static double kElevatorP = 0.1;
 	public static double kElevatorI = 0.000;
-	public static double kElevatorD = 1;
+	public static double kElevatorD = 0.0;
 	public static double kElevatorF = 0.0;
+	
+	public static double kElevatorHoldP = 0.075;
+	public static double kElevatorHoldI = 0.000;
+	public static double kElevatorHoldD = 0;
+	public static double kElevatorHoldF = 0.0;
+	
+	public static int kIntakeLeftTalonID = 30;//41;
+	public static int kIntakeRightTalonID = 25; //13;
+	public static int kElevatorLeftTalonID = 31; //3; //53;//9;
+	public static int kElevatorRightTalonID = 32;//53; //3; 
+	public static int kCarriageLeftTalonID = 28; //59;//42;
+	public static int kCarriageRightTalonID = 29; //28//6;
+	public static int kDriveFrontLeftTalonID = 33;//2;
+	public static int kDriveFrontRightTalonID = 36;//17;
+	public static int kDriveBackLeftTalonID = 34;//4;
+	public static int kDriveBackRightTalonID = 35;//40;
 
-	public static double kTurnP = 0.0;
+	public static double kDriveStraightP = 1.0 / 15.0; //1/30.0;
+	public static double kDriveStraightI = 0.0;
+	public static double kDriveStraightD = 1 / (8.0 * 2.0); //1 / (8.0 * 1.5);
+	
+	public static double kTurnP = 1.0 / 96.50; //1.0 / 95.0; //old: 0.5 * 1.0 / 90.0;
 	public static double kTurnI = 0.0;
-	public static double kTurnD = 0.0;
+	public static double kTurnD = 1 / (8.0 * 2.05); //1 / (8.0 * 3.4); //old: 1 / (8.0 * 3.2);
 
 	public static final int kTopLeftPin = 0;
 	public static final int kTopRightPin = 1;
@@ -32,39 +53,47 @@ public class Constants {
 	public static final int shifterPin1 = 0;
 	public static final int shifterPin2 = 1;
 
-	public static int kThrottle = 5; //left analog up/down
-	public static int kWheel = 0; //right analog left/right
+	public static int kThrottle = 5;
+	public static int kWheel = 0;
 	public static int kQuickTurn = 5;
-	public static int kManualElevate = 1;
-	public static int kIntake = 6; //x button
-	public static int kOuttake = 3; //y button
-
-//	public static double kWinchSpeed = 1;
-//	public static int kWinchMotor = 13;
-//	public static int kOperatorJoystick = 0;
-//	public static int kWinchButton = 1;
 	
-//	public static int kIntakePortA = 5;
-//	public static int kIntakePortB = 6;
+	public static int kManualElevate = 1;
+	public static int kManualMode = 5;
+	public static int kZero = 5;
+	
+	public static int kIntake = 6;
+	public static int kOuttake = 3;
+
+	public static int kSwitch = 2;
 	
 	public static int kPIDLoopIdx = 0;
 	public static int kTimeoutMs = 0;
 	public static int kSlotIdx = 0;
 
-
-	// need to add extra height for carriage, current heights are equal to the switch/scale heights
-	// in meters
-	public static double offset = 0.127;
-	public static double kLowScaleHeight = 1.2912 - offset;
-	public static double kDefaultScaleHeight = 1.524 - offset;
-	public static double kHighScaleHeight = 1.5;
-
-	public static double kDefaultSwitchHeight = 0.47625 + 0.33 - 0.127; //1 ft. 6-3/4 in
+//	/*** Scale Height Values (converted to feet) ***/
+	public static double kMinElevatorHeight = 0.0;
+	public static double kMaxElevatorHeight = 3.937;
+	public static double kLowScaleHeight = 2.657;
+	public static double kDefaultScaleHeight = 3.182;
+	public static double kHighScaleHeight = 3.182 + (4.0/12.0); //3.773
+	public static double kDefaultSwitchHeight = 1.148 + (6.0/12.0);
 	
-	//encoder testing values
-	public static double kInchesPerTicks;
-	public static int kLeftAchannel = 0;
-	public static int kLeftBchannel = 1;
-	public static int kRightAchannel = 2;
-	public static int kRightBchannel = 3;
+//	/*** Deprecated Scale Height Values (in meters) ***/
+	 public static double offset = 0.127;
+//	 public static double kMinElevatorHeight = 0.0;
+//	 public static double kMaxElevatorHeight = 1.2;
+//	 public static double kLowScaleHeight = 0.81;
+//	 public static double kDefaultScaleHeight = 0.97;
+//	 public static double kHighScaleHeight = 1.15;
+//	 public static double kDefaultSwitchHeight = 0.355;
+	
+	/*** Auton Path Values (feet) ***/
+	public static String autonChoiceString = "Auton Choice(2Cube, Switch, Scale, DriveLine):";
+	public static double distanceFromWallToSwitch = 168.0/12.0;
+	public static double distanceFromWallToScale = 294.0/12.0;
+	public static double distanceFromWallToAlley = 236.0/12.0;
+	public static double distanceFromAlleyToSwitch = 68.0/12.0;
+	public static double alleyDistanceToSwitch = 236.0/12.0;
+	public static double alleyDistanceToScale = 220.0/12.0;//236.0/12.0;
+	
 }
